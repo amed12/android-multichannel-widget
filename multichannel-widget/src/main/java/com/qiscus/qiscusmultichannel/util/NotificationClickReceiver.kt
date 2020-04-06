@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.qiscus.qiscusmultichannel.MultichannelWidget
-import com.qiscus.sdk.chat.core.custom.data.model.QiscusComment
+import com.qiscus.sdk.chat.core.data.model.QiscusComment
 
 /**
  * @author Yuana andhikayuana@gmail.com

@@ -1,6 +1,6 @@
 package com.qiscus.qiscusmultichannel.util
 
-import com.qiscus.sdk.chat.core.custom.data.model.QiscusComment
+import com.qiscus.sdk.chat.core.data.model.QiscusComment
 import org.json.JSONObject
 
 /**

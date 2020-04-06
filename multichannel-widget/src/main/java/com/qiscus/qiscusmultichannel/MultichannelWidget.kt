@@ -10,10 +10,12 @@ import com.qiscus.qiscusmultichannel.ui.chat.ChatRoomActivity
 import com.qiscus.qiscusmultichannel.ui.loading.LoadingActivity
 import com.qiscus.qiscusmultichannel.util.PNUtil
 import com.qiscus.qiscusmultichannel.util.QiscusChatLocal
-import com.qiscus.sdk.chat.core.custom.QiscusCore
-import com.qiscus.sdk.chat.core.custom.data.model.*
-import com.qiscus.sdk.chat.core.custom.data.remote.QiscusApi
-import com.qiscus.sdk.chat.core.custom.util.QiscusFirebaseMessagingUtil
+import com.qiscus.sdk.chat.core.QiscusCore
+import com.qiscus.sdk.chat.core.data.model.QiscusAccount
+import com.qiscus.sdk.chat.core.data.model.QiscusChatRoom
+import com.qiscus.sdk.chat.core.data.model.QiscusNonce
+import com.qiscus.sdk.chat.core.data.remote.QiscusApi
+import com.qiscus.sdk.chat.core.util.QiscusFirebaseMessagingUtil
 import org.json.JSONObject
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers

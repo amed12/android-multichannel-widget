@@ -9,8 +9,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.qiscus.nirmana.Nirmana
 import com.qiscus.qiscusmultichannel.R
-import com.qiscus.sdk.chat.core.custom.data.model.QiscusChatRoom
-import com.qiscus.sdk.chat.core.custom.data.model.QiscusPhoto
+import com.qiscus.sdk.chat.core.data.model.QiscusChatRoom
+import com.qiscus.sdk.chat.core.data.model.QiscusPhoto
 import kotlinx.android.synthetic.main.activity_send_image_confirmation_mc.*
 
 class SendImageConfirmationActivity : AppCompatActivity() {

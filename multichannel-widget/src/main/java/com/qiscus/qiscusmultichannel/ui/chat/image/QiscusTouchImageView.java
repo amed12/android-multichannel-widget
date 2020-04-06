@@ -25,7 +25,8 @@ import android.widget.Scroller;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.qiscus.sdk.chat.core.custom.util.QiscusLogger;
+import com.qiscus.sdk.chat.core.util.QiscusLogger;
+
 /*
  * Copyright (c) 2016 Qiscus.
  *

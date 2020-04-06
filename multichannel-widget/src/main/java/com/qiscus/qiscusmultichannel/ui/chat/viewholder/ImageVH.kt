@@ -25,10 +25,10 @@ import com.qiscus.qiscusmultichannel.util.DateUtil
 import com.qiscus.qiscusmultichannel.util.QiscusImageUtil
 import com.qiscus.qiscusmultichannel.util.showToast
 import com.qiscus.qiscusmultichannel.util.webView.WebViewHelper
-import com.qiscus.sdk.chat.core.custom.QiscusCore
-import com.qiscus.sdk.chat.core.custom.data.model.QiscusComment
-import com.qiscus.sdk.chat.core.custom.data.remote.QiscusApi
-import com.qiscus.sdk.chat.core.custom.util.QiscusDateUtil
+import com.qiscus.sdk.chat.core.QiscusCore
+import com.qiscus.sdk.chat.core.data.model.QiscusComment
+import com.qiscus.sdk.chat.core.data.remote.QiscusApi
+import com.qiscus.sdk.chat.core.util.QiscusDateUtil
 import org.json.JSONObject
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers

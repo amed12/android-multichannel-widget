@@ -6,10 +6,10 @@ import com.qiscus.qiscusmultichannel.data.model.DataInitialChat
 import com.qiscus.qiscusmultichannel.data.model.UserProperties
 import com.qiscus.qiscusmultichannel.data.repository.ChatroomRepository
 import com.qiscus.qiscusmultichannel.data.repository.response.ResponseInitiateChat
-import com.qiscus.sdk.chat.core.custom.QiscusCore
-import com.qiscus.sdk.chat.core.custom.data.model.QiscusComment
-import com.qiscus.sdk.chat.core.custom.data.remote.QiscusApi
-import com.qiscus.sdk.chat.core.custom.data.remote.QiscusPusherApi
+import com.qiscus.sdk.chat.core.QiscusCore
+import com.qiscus.sdk.chat.core.data.model.QiscusComment
+import com.qiscus.sdk.chat.core.data.remote.QiscusApi
+import com.qiscus.sdk.chat.core.data.remote.QiscusPusherApi
 import org.json.JSONObject
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers

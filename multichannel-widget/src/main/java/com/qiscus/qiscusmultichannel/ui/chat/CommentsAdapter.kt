@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.qiscus.qiscusmultichannel.R
 import com.qiscus.qiscusmultichannel.ui.chat.viewholder.*
-import com.qiscus.sdk.chat.core.custom.data.model.QiscusComment
-import com.qiscus.sdk.chat.core.custom.util.QiscusAndroidUtil
-import com.qiscus.sdk.chat.core.custom.util.QiscusDateUtil
+import com.qiscus.sdk.chat.core.data.model.QiscusComment
+import com.qiscus.sdk.chat.core.util.QiscusAndroidUtil
+import com.qiscus.sdk.chat.core.util.QiscusDateUtil
 
 /**
  * Created on : 19/08/19

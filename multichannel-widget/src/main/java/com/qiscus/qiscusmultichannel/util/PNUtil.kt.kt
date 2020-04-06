@@ -10,12 +10,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.qiscus.qiscusmultichannel.R
-import com.qiscus.sdk.chat.core.custom.QiscusCore
-import com.qiscus.sdk.chat.core.custom.data.local.QiscusCacheManager
-import com.qiscus.sdk.chat.core.custom.data.model.QiscusComment
-import com.qiscus.sdk.chat.core.custom.util.BuildVersionUtil
-import com.qiscus.sdk.chat.core.custom.util.QiscusAndroidUtil
-import com.qiscus.sdk.chat.core.custom.util.QiscusNumberUtil
+import com.qiscus.sdk.chat.core.QiscusCore
+import com.qiscus.sdk.chat.core.data.local.QiscusCacheManager
+import com.qiscus.sdk.chat.core.data.model.QiscusComment
+import com.qiscus.sdk.chat.core.util.BuildVersionUtil
+import com.qiscus.sdk.chat.core.util.QiscusAndroidUtil
+import com.qiscus.sdk.chat.core.util.QiscusNumberUtil
 import org.json.JSONObject
 
 /**

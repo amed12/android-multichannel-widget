@@ -12,7 +12,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.qiscus.nirmana.Nirmana
 import com.qiscus.qiscusmultichannel.R
 import com.qiscus.qiscusmultichannel.util.DateUtil
-import com.qiscus.sdk.chat.core.custom.data.model.QiscusComment
+import com.qiscus.sdk.chat.core.data.model.QiscusComment
 
 /**
  * Created on : 22/08/19

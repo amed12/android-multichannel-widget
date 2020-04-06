@@ -5,9 +5,9 @@ import android.media.ExifInterface
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Environment
-import com.qiscus.sdk.chat.core.custom.QiscusCore
-import com.qiscus.sdk.chat.core.custom.data.local.QiscusCacheManager
-import com.qiscus.sdk.chat.core.custom.util.QiscusFileUtil
+import com.qiscus.sdk.chat.core.QiscusCore
+import com.qiscus.sdk.chat.core.data.local.QiscusCacheManager
+import com.qiscus.sdk.chat.core.util.QiscusFileUtil
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream

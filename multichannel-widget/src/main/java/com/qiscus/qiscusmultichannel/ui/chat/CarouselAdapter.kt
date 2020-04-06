@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.qiscus.qiscusmultichannel.R
 import com.qiscus.qiscusmultichannel.ui.chat.viewholder.BaseViewHolder
 import com.qiscus.qiscusmultichannel.ui.chat.viewholder.CardVH
-import com.qiscus.sdk.chat.core.custom.data.model.QiscusComment
+import com.qiscus.sdk.chat.core.data.model.QiscusComment
 import kotlinx.android.synthetic.main.item_card_mc.view.*
 import org.json.JSONArray
 
