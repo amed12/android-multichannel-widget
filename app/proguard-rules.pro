@@ -101,6 +101,9 @@
     *;
 }
 
+-keep class org.eclipse.paho.android.service.** { *; }
+-keepclasseswithmembers class org.eclipse.paho.** { *; }
+
 #okhttp
 -dontwarn javax.annotation.**
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
