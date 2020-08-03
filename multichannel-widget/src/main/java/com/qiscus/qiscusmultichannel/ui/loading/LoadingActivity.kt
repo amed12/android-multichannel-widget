@@ -8,7 +8,7 @@ import com.qiscus.qiscusmultichannel.R
 import com.qiscus.qiscusmultichannel.data.model.UserProperties
 import com.qiscus.qiscusmultichannel.ui.chat.ChatRoomActivity
 import com.qiscus.qiscusmultichannel.util.showToast
-import com.qiscus.sdk.chat.core.data.model.QiscusChatRoom
+import com.qiscus.sdk.chat.core.data.model.QChatRoom
 import org.json.JSONObject
 
 /**
@@ -75,8 +75,8 @@ class LoadingActivity : AppCompatActivity(), LoadingPresenter.LoadingView {
         finish()
     }
 
-    override fun onSuccess(room: QiscusChatRoom) {
-        ChatRoomActivity.generateIntent(this, room)
+    override fun onSuccess(room: QChatRoom) {
+        startActivity(ChatRoomActivity.generateIntent(this, room))
         finish()
     }
 }

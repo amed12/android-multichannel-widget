@@ -43,14 +43,14 @@ object QiscusImageUtil {
         }
 
         //max Height and width values of the compressed image is taken as 1440x900
-        val maxHeight = QiscusCore.getChatConfig().getQiscusImageCompressionConfig().getMaxHeight()
-        val maxWidth = QiscusCore.getChatConfig().getQiscusImageCompressionConfig().getMaxWidth()
+        val maxHeight = Const.qiscusCore()?.getChatConfig()?.getQiscusImageCompressionConfig()?.getMaxHeight()
+        val maxWidth = Const.qiscusCore()?.getChatConfig()?.getQiscusImageCompressionConfig()?.getMaxWidth()
         var imgRatio = (actualWidth / actualHeight).toFloat()
-        val maxRatio = maxWidth / maxHeight
+        val maxRatio = maxWidth?.div(maxHeight!!)
 
         //width and height values are set maintaining the aspect ratio of the image
-        if (actualHeight > maxHeight || actualWidth > maxWidth) {
-            if (imgRatio < maxRatio) {
+        if (actualHeight > maxHeight!! || actualWidth > maxWidth!!) {
+            if (imgRatio < maxRatio!!) {
                 imgRatio = maxHeight / actualHeight
                 actualWidth = (imgRatio * actualWidth).toInt()
                 actualHeight = maxHeight.toInt()
@@ -141,10 +141,12 @@ object QiscusImageUtil {
             out = FileOutputStream(filename)
 
             //write the compressed bitmap at the destination specified by filename.
-            QiscusImageUtil.getScaledBitmap(Uri.fromFile(imageFile))!!.compress(
-                Bitmap.CompressFormat.JPEG,
-                QiscusCore.getChatConfig().getQiscusImageCompressionConfig().getQuality(), out
-            )
+            Const.qiscusCore()?.getChatConfig()?.getQiscusImageCompressionConfig()?.getQuality()?.let {
+                QiscusImageUtil.getScaledBitmap(Uri.fromFile(imageFile))!!.compress(
+                    Bitmap.CompressFormat.JPEG,
+                    it, out
+                )
+            }
 
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
@@ -237,7 +239,7 @@ object QiscusImageUtil {
         val storageDir =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         val image = File.createTempFile(imageFileName, ".jpg", storageDir)
-        QiscusCacheManager.getInstance().cacheLastImagePath("file:" + image.getAbsolutePath())
+        Const.qiscusCore()?.cacheManager?.cacheLastImagePath("file:" + image.getAbsolutePath())
         return image
     }
 

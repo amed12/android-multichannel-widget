@@ -6,8 +6,10 @@ import com.qiscus.qiscusmultichannel.data.model.DataInitialChat
 import com.qiscus.qiscusmultichannel.data.model.UserProperties
 import com.qiscus.qiscusmultichannel.data.repository.ChatroomRepository
 import com.qiscus.qiscusmultichannel.data.repository.response.ResponseInitiateChat
+import com.qiscus.qiscusmultichannel.util.Const
 import com.qiscus.sdk.chat.core.QiscusCore
-import com.qiscus.sdk.chat.core.data.model.QiscusComment
+import com.qiscus.sdk.chat.core.QiscusCore.OnSendMessageListener
+import com.qiscus.sdk.chat.core.data.model.QMessage
 import com.qiscus.sdk.chat.core.data.remote.QiscusApi
 import com.qiscus.sdk.chat.core.data.remote.QiscusPusherApi
 import org.json.JSONObject
@@ -23,37 +25,41 @@ class ChatroomRepositoryImpl : ChatroomRepository {
 
     fun sendComment(
         roomId: Long,
-        message: QiscusComment,
-        onSuccess: (QiscusComment) -> Unit,
+        message: QMessage,
+        onSuccess: (QMessage) -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        QiscusApi.getInstance().sendMessage(message)
-            .doOnSubscribe { QiscusCore.getDataStore().addOrUpdate(message) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                if (it.roomId == roomId) {
-                    onSuccess(it)
+        Const.qiscusCore()!!.sendMessage(message, object : OnSendMessageListener {
+            override fun onSending(qiscusComment: QMessage) {
+                Const.qiscusCore()!!.dataStore.addOrUpdate(qiscusComment)
+            }
+
+            override fun onSuccess(qiscusComment: QMessage) {
+                if (qiscusComment.chatRoomId == roomId) {
+                    onSuccess(qiscusComment)
                 }
-            }, { throwable ->
-                throwable.printStackTrace()
-                if (message.roomId == roomId) {
-                    onError(throwable)
+            }
+
+            override fun onFailed(t: Throwable, qiscusComment: QMessage) {
+                t.printStackTrace()
+                if (qiscusComment.chatRoomId == roomId) {
+                    onError(t)
                 }
-            })
+            }
+        })
     }
 
     fun publishCustomEvent(
         roomId: Long,
         data: JSONObject
     ) {
-        QiscusPusherApi.getInstance().publishCustomEvent(roomId, data)
+        Const.qiscusCore()?.pusherApi?.publishCustomEvent(roomId, data)
     }
 
     fun subscribeCustomEvent(
         roomId: Long
     ) {
-        QiscusPusherApi.getInstance().subsribeCustomEvent(roomId)
+        Const.qiscusCore()?.pusherApi?.subsribeCustomEvent(roomId)
     }
 
     fun initiateChat(
@@ -66,13 +72,16 @@ class ChatroomRepositoryImpl : ChatroomRepository {
         onError: (Throwable) -> Unit
     ) {
 
-        QiscusApi.getInstance().jwtNonce
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+
+        val appID = Const.qiscusCore()?.appId
+
+        Const.qiscusCore()?.api?.jwtNonce
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe({
                 MultichannelWidget.instance.component.qiscusChatRepository.initiateChat(
                     DataInitialChat(
-                        QiscusCore.getAppId(),
+                        appID.toString(),
                         userId,
                         name,
                         avatar,

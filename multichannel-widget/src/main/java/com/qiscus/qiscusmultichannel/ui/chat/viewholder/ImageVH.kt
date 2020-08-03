@@ -21,17 +21,12 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.qiscus.nirmana.Nirmana
 import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.util.Const
 import com.qiscus.qiscusmultichannel.util.DateUtil
-import com.qiscus.qiscusmultichannel.util.QiscusImageUtil
-import com.qiscus.qiscusmultichannel.util.showToast
 import com.qiscus.qiscusmultichannel.util.webView.WebViewHelper
 import com.qiscus.sdk.chat.core.QiscusCore
-import com.qiscus.sdk.chat.core.data.model.QiscusComment
-import com.qiscus.sdk.chat.core.data.remote.QiscusApi
+import com.qiscus.sdk.chat.core.data.model.QMessage
 import com.qiscus.sdk.chat.core.util.QiscusDateUtil
-import org.json.JSONObject
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import java.io.File
 import java.util.*
 import java.util.regex.Matcher
@@ -47,11 +42,11 @@ class ImageVH(itemView: View) : BaseViewHolder(itemView) {
     private val sender: TextView? = itemView.findViewById(R.id.sender)
     private val dateOfMessage: TextView? = itemView.findViewById(R.id.dateOfMessage)
 
-    override fun bind(comment: QiscusComment) {
+    override fun bind(comment: QMessage) {
         super.bind(comment)
 
         try {
-            val content = JSONObject(comment.extraPayload)
+            val content = comment.payload
             val url = content.getString("url")
             val caption = content.getString("caption")
             val filename = content.getString("file_name")
@@ -69,14 +64,14 @@ class ImageVH(itemView: View) : BaseViewHolder(itemView) {
                 message.text = caption
             }
 
-            val chatRoom = QiscusCore.getDataStore().getChatRoom(comment.roomId)
+            val chatRoom = Const.qiscusCore()?.getDataStore()?.getChatRoom(comment.chatRoomId)
 
-            sender?.visibility = if (chatRoom.isGroup) View.VISIBLE else View.GONE
+            sender?.visibility = if (chatRoom!!.type == "group") View.VISIBLE else View.GONE
 
-            dateOfMessage?.text = DateUtil.toFullDate(comment.time)
+            dateOfMessage?.text = DateUtil.toFullDate(comment.timestamp)
 
             thumbnail.setOnClickListener {
-                dialodViewImage(url, comment.sender, caption, comment.time)
+                dialodViewImage(url, comment.sender.name, caption, comment.timestamp)
                 /*val localPath = QiscusCore.getDataStore().getLocalPath(comment.id)
                 if (localPath != null) {
                     itemView.context.showToast("Image already in the gallery")
@@ -92,28 +87,6 @@ class ImageVH(itemView: View) : BaseViewHolder(itemView) {
 
     }
 
-    private fun downloadFile(qiscusComment: QiscusComment, fileName: String, URLImage: String) {
-        QiscusApi.getInstance()
-            .downloadFile(URLImage, fileName) {
-                // here you can get the progress total downloaded
-            }
-            .doOnNext { file ->
-                // here we update the local path of file
-                QiscusCore.getDataStore()
-                    .addOrUpdateLocalPath(qiscusComment.roomId, qiscusComment.id, file.absolutePath)
-
-                QiscusImageUtil.addImageToGallery(file)
-
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                itemView.context.showToast("success save image to gallery")
-            }, {
-                //on error
-            })
-    }
-
     override fun setNeedToShowDate(showDate: Boolean) {
         dateOfMessage?.visibility = if (showDate) View.VISIBLE else View.GONE
     }
@@ -123,8 +96,8 @@ class ImageVH(itemView: View) : BaseViewHolder(itemView) {
         showLocalImage(localPath)
     }
 
-    private fun showSentImage(comment: QiscusComment, url: String) {
-        val localPath = QiscusCore.getDataStore().getLocalPath(comment.id)
+    private fun showSentImage(comment: QMessage, url: String) {
+        val localPath = Const.qiscusCore()?.getDataStore()?.getLocalPath(comment.id)
         localPath?.let { showLocalImage(it) } ?: Nirmana.getInstance().get()
             .setDefaultRequestOptions(
                 RequestOptions()
@@ -192,19 +165,20 @@ class ImageVH(itemView: View) : BaseViewHolder(itemView) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(fileImage))
         } else {
-            QiscusCore.getApps().packageName + ".qiscus.sdk.provider"
+
+            Const.qiscusCore()?.getApps()?.packageName + ".qiscus.sdk.provider"
             intent.putExtra(
                 Intent.EXTRA_STREAM,
                 FileProvider.getUriForFile(
                     itemView.context,
-                    QiscusCore.getApps().packageName + ".qiscus.sdk.provider",
+                    Const.qiscusCore()?.getApps()?.packageName + ".qiscus.sdk.provider",
                     fileImage
                 )
             )
         }
     }
 
-    @SuppressLint("DefaultLocale")
+    @SuppressLint("DefaultLocale", "RestrictedApi")
     private fun setUpLinks() {
         val text = message.text.toString().toLowerCase()
         val matcher: Matcher = PatternsCompat.AUTOLINK_WEB_URL.matcher(text)

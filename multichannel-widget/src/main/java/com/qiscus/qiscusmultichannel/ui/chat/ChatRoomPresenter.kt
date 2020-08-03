@@ -2,13 +2,10 @@ package com.qiscus.qiscusmultichannel.ui.chat
 
 import android.webkit.MimeTypeMap
 import com.qiscus.qiscusmultichannel.R
-import com.qiscus.sdk.chat.core.QiscusCore
-import com.qiscus.sdk.chat.core.data.local.QiscusCacheManager
+import com.qiscus.qiscusmultichannel.util.Const
 import com.qiscus.sdk.chat.core.data.model.*
-import com.qiscus.sdk.chat.core.data.remote.QiscusApi
-import com.qiscus.sdk.chat.core.data.remote.QiscusPusherApi
+import com.qiscus.sdk.chat.core.event.QMessageReceivedEvent
 import com.qiscus.sdk.chat.core.event.QiscusChatRoomEvent
-import com.qiscus.sdk.chat.core.event.QiscusCommentReceivedEvent
 import com.qiscus.sdk.chat.core.presenter.QiscusChatRoomEventHandler
 import com.qiscus.sdk.chat.core.util.QiscusAndroidUtil
 import com.qiscus.sdk.chat.core.util.QiscusFileUtil
@@ -33,14 +30,14 @@ import androidx.core.util.Pair as APair
  * Author     : Taufik Budi S
  * GitHub     : https://github.com/tfkbudi
  */
-class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.StateListener {
+class ChatRoomPresenter(var room: QChatRoom) : QiscusChatRoomEventHandler.StateListener {
 
     var view: ChatRoomView? = null
-    private val qiscusAccount: QiscusAccount = QiscusCore.getQiscusAccount()
-    private val roomEventHandler = QiscusChatRoomEventHandler(this.room, this)
+    private val qiscusAccount: QAccount? = Const.qiscusCore()?.qiscusAccount
+    private val roomEventHandler = QiscusChatRoomEventHandler(Const.qiscusCore(), this.room, this)
 
     private val commentComparator =
-        { lhs: QiscusComment, rhs: QiscusComment -> rhs.time.compareTo(lhs.time) }
+        { lhs: QMessage, rhs: QMessage -> rhs.timestamp.compareTo(lhs.timestamp) }
 
     fun attachView(view: ChatRoomView) {
         this.view = view
@@ -56,22 +53,31 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
         }
     }
 
-    private fun sendComment(message: QiscusComment) {
+    private fun sendComment(message: QMessage) {
 //        view.onSendingComment(qiscusComment)
-        val subscription = QiscusApi.getInstance().sendMessage(message)
-            .doOnSubscribe { QiscusCore.getDataStore().addOrUpdate(message) }
-            .doOnNext { this.commentSuccess(it) }
-            .doOnError { commentFail(it, message) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+
+        val qAccount: QAccount = Const.qiscusCore()?.getQiscusAccount()!!
+        val qUser = QUser()
+        qUser.avatarUrl = qAccount.avatarUrl
+        qUser.id = qAccount.id
+        qUser.extras = qAccount.extras
+        qUser.name = qAccount.name
+        message.setSender(qUser)
+
+        val subscription = Const.qiscusCore()?.api?.sendMessage(message)
+            ?.doOnSubscribe { Const.qiscusCore()?.getDataStore()?.addOrUpdate(message) }
+            ?.doOnNext { this.commentSuccess(it) }
+            ?.doOnError { commentFail(it, message) }
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
 //            .compose(bindToLifecycle())
-            .subscribe({ commentSend ->
-                if (commentSend.roomId == room.id) {
+            ?.subscribe({ commentSend ->
+                if (commentSend.chatRoomId == room.id) {
                     view?.onSuccessSendComment(commentSend)
                 }
             }, { throwable ->
                 throwable.printStackTrace()
-                if (message.roomId == room.id) {
+                if (message.chatRoomId == room.id) {
                     view?.onFailedSendComment(message)
                 }
             })
@@ -80,52 +86,47 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
     }
 
     fun sendComment(content: String) {
-        val qiscusComment = QiscusComment.generateMessage(room.id, content)
+        val qiscusComment = QMessage.generateMessage(room.id, content)
         sendComment(qiscusComment)
     }
 
-    fun sendLocation(location: QiscusLocation) {
-        val qiscusComment = QiscusComment.generateLocationMessage(room.id, location)
-        sendComment(qiscusComment)
-    }
-
-    fun sendReplyComment(content: String, origin: QiscusComment) {
-        val comment = QiscusComment.generateReplyMessage(room.id, content, origin)
+    fun sendReplyComment(content: String, origin: QMessage) {
+        val comment = QMessage.generateReplyMessage(room.id, content, origin)
         sendComment(comment)
     }
 
-    private fun commentSuccess(qiscusComment: QiscusComment) {
+    private fun commentSuccess(qiscusComment: QMessage) {
 //        pendingTask.remove(qiscusComment)
-        qiscusComment.state = QiscusComment.STATE_ON_QISCUS
-        val savedQiscusComment = QiscusCore.getDataStore().getComment(qiscusComment.uniqueId)
-        if (savedQiscusComment != null && savedQiscusComment.state > qiscusComment.state) {
-            qiscusComment.state = savedQiscusComment.state
+        qiscusComment.status = QMessage.STATE_SENT
+        val savedQiscusComment = Const.qiscusCore()?.getDataStore()?.getComment(qiscusComment.uniqueId)
+        if (savedQiscusComment != null && savedQiscusComment.status > qiscusComment.status) {
+            qiscusComment.status = savedQiscusComment.status
         }
-        QiscusCore.getDataStore().addOrUpdate(qiscusComment)
+        Const.qiscusCore()?.getDataStore()?.addOrUpdate(qiscusComment)
     }
 
-    private fun commentFail(throwable: Throwable, qiscusComment: QiscusComment) {
+    private fun commentFail(throwable: Throwable, qiscusComment: QMessage) {
 //        pendingTask.remove(qiscusComment)
-        if (!QiscusCore.getDataStore().isContains(qiscusComment)) { //Have been deleted
+        if (!Const.qiscusCore()?.getDataStore()?.isContains(qiscusComment)!!) { //Have been deleted
             return
         }
 
-        var state = QiscusComment.STATE_PENDING
+        var state = QMessage.STATE_PENDING
         if (mustFailed(throwable, qiscusComment)) {
-            qiscusComment.isDownloading = false
-            state = QiscusComment.STATE_FAILED
+            //qiscusComment.isDownloading = false
+            state = QMessage.STATE_FAILED
         }
 
-        val savedQiscusComment = QiscusCore.getDataStore().getComment(qiscusComment.uniqueId)
-        if (savedQiscusComment != null && savedQiscusComment.state > QiscusComment.STATE_SENDING) {
+        val savedQiscusComment = Const.qiscusCore()?.getDataStore()?.getComment(qiscusComment.uniqueId)
+        if (savedQiscusComment != null && savedQiscusComment.status > QMessage.STATE_SENDING) {
             return
         }
 
-        qiscusComment.state = state
-        QiscusCore.getDataStore().addOrUpdate(qiscusComment)
+        qiscusComment.status = state
+        Const.qiscusCore()?.getDataStore()?.addOrUpdate(qiscusComment)
     }
 
-    private fun mustFailed(throwable: Throwable, qiscusComment: QiscusComment): Boolean {
+    private fun mustFailed(throwable: Throwable, qiscusComment: QMessage): Boolean {
         //Error response from server
         //Means something wrong with server, e.g user is not member of these room anymore
         return throwable is HttpException && throwable.code() >= 400 ||
@@ -153,67 +154,67 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
 
     private fun getLocalComments(
         count: Int
-    ): Observable<List<QiscusComment>> {
-        return QiscusCore.getDataStore().getObservableComments(room.id, 2 * count)
-            .flatMap { Observable.from(it) }
-            .toSortedList(commentComparator)
-            .map {
+    ): Observable<List<QMessage>> {
+        return Const.qiscusCore()?.getDataStore()?.getObservableComments(room.id, 2 * count)
+            ?.flatMap { Observable.from(it) }
+            ?.toSortedList(commentComparator)
+            ?.map {
                 if (it.size > 0) {
                     it.subList(0, if (it.size > count) count else it.size)
                 } else it
             }
-            .subscribeOn(Schedulers.io())
+            ?.subscribeOn(Schedulers.io())!!
     }
 
-    private fun getInitRoomData(): Observable<APair<QiscusChatRoom, List<QiscusComment>>> {
-        return QiscusApi.getInstance().getChatRoomWithMessages(room.id)
-            .doOnError { it.printStackTrace() }
-            .doOnNext { roomData ->
+    private fun getInitRoomData(): Observable<APair<QChatRoom, List<QMessage>>> {
+        return Const.qiscusCore()?.api?.getChatRoomWithMessages(room.id)
+            ?.doOnError { it.printStackTrace() }
+            ?.doOnNext { roomData ->
                 roomEventHandler.setChatRoom(roomData.first)
 
-                roomData.second?.sortWith(Comparator { lhs, rhs -> rhs.time.compareTo(lhs.time) })
+                roomData.second?.sortWith(Comparator { lhs, rhs -> rhs.timestamp.compareTo(lhs.timestamp) })
 
-                QiscusCore.getDataStore().addOrUpdate(roomData.first)
+                Const.qiscusCore()?.getDataStore()?.addOrUpdate(roomData.first)
             }
-            .doOnNext { roomData ->
+            ?.doOnNext { roomData ->
                 for (qiscusComment in roomData.second!!) {
-                    QiscusCore.getDataStore().addOrUpdate(qiscusComment)
+                    Const.qiscusCore()?.getDataStore()?.addOrUpdate(qiscusComment)
                 }
             }
-            .subscribeOn(Schedulers.io())
-            .onErrorReturn { null }
+            ?.subscribeOn(Schedulers.io())
+            ?.onErrorReturn { null }!!
     }
 
-    fun loadOlderCommentThan(qiscusComment: QiscusComment) {
+    fun loadOlderCommentThan(qiscusComment: QMessage) {
         view?.showLoading()
-        QiscusCore.getDataStore().getObservableOlderCommentsThan(qiscusComment, room.id, 40)
-            .flatMap { Observable.from(it) }
-            .filter { qiscusComment1 -> qiscusComment.id == -1L || qiscusComment1.id < qiscusComment.id }
-            .toSortedList(commentComparator)
-            .map {
+        Const.qiscusCore()?.getDataStore()?.getObservableOlderCommentsThan(qiscusComment, room.id, 40)
+            ?.flatMap { Observable.from(it) }
+            ?.filter { qiscusComment1 -> qiscusComment.id == -1L || qiscusComment1.id < qiscusComment.id }
+            ?.toSortedList(commentComparator)
+            ?.map {
                 if (it.size >= 20) {
                     it.subList(0, 20)
                 }
                 it
             }
-            .doOnNext { updateRepliedSender(it) }
-            .flatMap { comments ->
+            ?.doOnNext { updateRepliedSender(it) }
+            ?.flatMap { comments ->
                 if (isValidOlderComments(comments, qiscusComment))
-                    Observable.from<QiscusComment>(comments).toSortedList(commentComparator)
+                    Observable.from<QMessage>(comments).toSortedList(commentComparator)
                 else
                     getCommentsFromNetwork(qiscusComment.id)
                         .map { comments1 ->
                             for (localComment in comments) {
-                                if (localComment.state <= QiscusComment.STATE_SENDING) {
+                                if (localComment.status <= QMessage.STATE_SENDING) {
                                     comments1.toMutableList().add(localComment)
                                 }
                             }
                             comments1
                         }
             }
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+            ?.subscribeOn(Schedulers.newThread())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe({
                 view?.onLoadMoreComments(it)
                 view?.dismissLoading()
             }, { throwable ->
@@ -230,7 +231,7 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
         var compressedFile = file
         if (QiscusFileUtil.isImage(file.path) && !file.name.endsWith(".gif")) {
             try {
-                compressedFile = Compressor(QiscusCore.getApps()).compressToFile(file)
+                compressedFile = Compressor(Const.qiscusCore()?.getApps()).compressToFile(file)
             } catch (e: NullPointerException) {
                 view?.showError(QiscusTextUtil.getString(R.string.qiscus_corrupted_file_mc))
                 return
@@ -258,52 +259,58 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
             e.printStackTrace()
         }
         val qiscusComment =
-            QiscusComment.generateFileAttachmentMessage(room.id, file.path, caption, file.name)
+            QMessage.generateFileAttachmentMessage(room.id, file.path, caption, file.name)
         qiscusComment.extras = json
-        qiscusComment.isDownloading = true
+
+        val qAccount: QAccount = Const.qiscusCore()?.getQiscusAccount()!!
+        val qUser = QUser()
+        qUser.avatarUrl = qAccount.avatarUrl
+        qUser.id = qAccount.id
+        qUser.extras = qAccount.extras
+        qUser.name = qAccount.name
+        qiscusComment.setSender(qUser)
 
         view?.onSendingComment(qiscusComment)
         val finalCompressedFile = compressedFile
-        val subscription = QiscusApi.getInstance()
-            .upload(compressedFile) { percentage ->
-                qiscusComment.progress = percentage.toInt()
+        val subscription = Const.qiscusCore()?.api?.upload(compressedFile) { percentage ->
+                //qiscusComment.progress = percentage.toInt()
             }
-            .doOnSubscribe { QiscusCore.getDataStore().addOrUpdate(qiscusComment) }
-            .flatMap { uri ->
+            ?.doOnSubscribe { Const.qiscusCore()?.getDataStore()?.addOrUpdate(qiscusComment) }
+            ?.flatMap { uri ->
                 json.put("url", uri)
                 qiscusComment.extras = json
                 qiscusComment.updateAttachmentUrl(uri.toString())
-                QiscusApi.getInstance().sendMessage(qiscusComment)
+                Const.qiscusCore()?.api?.sendMessage(qiscusComment)
             }
-            .doOnNext { commentSend ->
-                QiscusCore.getDataStore()
-                    .addOrUpdateLocalPath(
-                        commentSend.roomId,
+            ?.doOnNext { commentSend ->
+                Const.qiscusCore()?.getDataStore()
+                    ?.addOrUpdateLocalPath(
+                        commentSend.chatRoomId,
                         commentSend.id,
                         finalCompressedFile.absolutePath
                     )
-                qiscusComment.isDownloading = false
+                //qiscusComment.isDownloading = false
                 commentSuccess(commentSend)
             }
-            .doOnError { throwable -> commentFail(throwable, qiscusComment) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            ?.doOnError { throwable -> commentFail(throwable, qiscusComment) }
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
 //            .compose(bindToLifecycle())
-            .subscribe({ commentSend ->
-                if (commentSend.roomId == room.id) {
+            ?.subscribe({ commentSend ->
+                if (commentSend.chatRoomId == room.id) {
                     view?.onSuccessSendComment(commentSend)
                 }
             }, { throwable ->
                 throwable.printStackTrace()
-                if (qiscusComment.roomId == room.id) {
+                if (qiscusComment.chatRoomId == room.id) {
                     view?.onFailedSendComment(qiscusComment)
                 }
             })
     }
 
     private fun isValidOlderComments(
-        qiscusComments: List<QiscusComment>,
-        lastQiscusComment: QiscusComment
+        qiscusComments: List<QMessage>,
+        lastQiscusComment: QMessage
     ): Boolean {
         var qiscusComments = qiscusComments
         if (qiscusComments.isEmpty()) return false
@@ -313,23 +320,23 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
         val size = qiscusComments.size
 
         if (size == 1) {
-            return qiscusComments[0].commentBeforeId == 0L && lastQiscusComment.commentBeforeId == qiscusComments[0].id
+            return qiscusComments[0].previousMessageId == 0L && lastQiscusComment.previousMessageId == qiscusComments[0].id
         }
 
         for (i in 0 until size - 1) {
-            if (!containsLastValidComment && qiscusComments[i].id == lastQiscusComment.commentBeforeId) {
+            if (!containsLastValidComment && qiscusComments[i].id == lastQiscusComment.previousMessageId) {
                 containsLastValidComment = true
             }
 
-            if (qiscusComments[i].commentBeforeId != qiscusComments[i + 1].id) {
+            if (qiscusComments[i].previousMessageId != qiscusComments[i + 1].id) {
                 return false
             }
         }
         return containsLastValidComment
     }
 
-    private fun cleanFailedComments(qiscusComments: List<QiscusComment>): List<QiscusComment> {
-        val comments = ArrayList<QiscusComment>()
+    private fun cleanFailedComments(qiscusComments: List<QMessage>): List<QMessage> {
+        val comments = ArrayList<QMessage>()
         for (qiscusComment in qiscusComments) {
             if (qiscusComment.id != -1L) {
                 comments.add(qiscusComment)
@@ -338,14 +345,14 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
         return comments
     }
 
-    private fun updateRepliedSender(comments: List<QiscusComment>) {
+    private fun updateRepliedSender(comments: List<QMessage>) {
         for (comment in comments) {
-            if (comment.type == QiscusComment.Type.REPLY) {
+            if (comment.type == QMessage.Type.REPLY) {
                 val repliedComment = comment.replyTo
                 if (repliedComment != null) {
-                    for (qiscusRoomMember in room.member) {
-                        if (repliedComment.senderEmail == qiscusRoomMember.email) {
-                            repliedComment.sender = qiscusRoomMember.username
+                    for (qiscusRoomMember in room.participants) {
+                        if (repliedComment.sender.id == qiscusRoomMember.id) {
+                            repliedComment.sender.name = qiscusRoomMember.name
                             comment.replyTo = repliedComment
                             break
                         }
@@ -355,34 +362,30 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
         }
     }
 
-    fun downloadFile(qiscusComment: QiscusComment, uri: String, fileName: String) {
-        if (qiscusComment.isDownloading) {
-            return
-        }
+    fun downloadFile(qiscusComment: QMessage, uri: String, fileName: String) {
 
-        val file = QiscusCore.getDataStore().getLocalPath(qiscusComment.id)
+        val file = Const.qiscusCore()?.getDataStore()?.getLocalPath(qiscusComment.id)
         if (file == null) {
-            qiscusComment.isDownloading = true
-            QiscusApi.getInstance()
-                .downloadFile(
+           // qiscusComment.isDownloading = true
+            Const.qiscusCore()?.api
+                ?.downloadFile(
                     uri, fileName
-                ) { percentage -> qiscusComment.progress = percentage.toInt() }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                ) { percentage ->
+
+                }
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
 //                .compose(bindToLifecycle())
-                .doOnNext { file1 ->
+                ?.doOnNext { file1 ->
                     QiscusFileUtil.notifySystem(file1)
-                    qiscusComment.isDownloading = false
-                    QiscusCore.getDataStore().addOrUpdateLocalPath(
-                        qiscusComment.roomId, qiscusComment.id,
+                    Const?.qiscusCore()?.getDataStore()?.addOrUpdateLocalPath(
+                        qiscusComment.chatRoomId, qiscusComment.id,
                         file1.absolutePath
                     )
                 }
-                .subscribe({ file1 ->
+                ?.subscribe({ file1 ->
                     //                    view.notifyDataChanged()
-                    if (qiscusComment.type == QiscusComment.Type.AUDIO) {
-                        qiscusComment.playAudio()
-                    } else if (qiscusComment.type == QiscusComment.Type.FILE || qiscusComment.type == QiscusComment.Type.VIDEO) {
+                    if (qiscusComment.type == QMessage.Type.FILE) {
                         view?.onFileDownloaded(
                             file1,
                             MimeTypeMap.getSingleton().getMimeTypeFromExtension(qiscusComment.extension)
@@ -390,7 +393,6 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
                     }
                 }, { throwable ->
                     throwable.printStackTrace()
-                    qiscusComment.isDownloading = false
                     view?.showError(QiscusTextUtil.getString(R.string.qiscus_failed_download_file_mc))
                 })
         } else {
@@ -409,19 +411,19 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
         }
     }
 
-    private fun getCommentsFromNetwork(lastCommentId: Long): Observable<List<QiscusComment>> {
-        return QiscusApi.getInstance().getPreviousMessagesById(room.id, 20, lastCommentId)
-            .doOnNext { qiscusComment ->
-                QiscusCore.getDataStore().addOrUpdate(qiscusComment)
-                qiscusComment.roomId = room.id
+    private fun getCommentsFromNetwork(lastCommentId: Long): Observable<List<QMessage>> {
+        return Const.qiscusCore()?.api?.getPreviousMessagesById(room.id, 20, lastCommentId)
+            ?.doOnNext { qiscusComment ->
+                Const.qiscusCore()?.getDataStore()?.addOrUpdate(qiscusComment)
+                qiscusComment.chatRoomId = room.id
             }
-            .toSortedList(commentComparator)
-            .subscribeOn(Schedulers.io())
+            ?.toSortedList(commentComparator)
+            ?.subscribeOn(Schedulers.io())!!
     }
 
     @Subscribe
-    fun onCommentReceivedEvent(event: QiscusCommentReceivedEvent) {
-        if (event.qiscusComment.roomId == room.id) {
+    fun onCommentReceivedEvent(event: QMessageReceivedEvent) {
+        if (event.qiscusComment.chatRoomId == room.id) {
             onGotNewComment(event.qiscusComment)
         }
     }
@@ -430,10 +432,10 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
     fun onRoomReceivedEvent(event: QiscusChatRoomEvent) {
         when (event.event) {
             QiscusChatRoomEvent.Event.READ -> {
-                val qiscusComment = QiscusCore.getDataStore().getComment(event.commentUniqueId)
+                val qiscusComment = Const.qiscusCore()?.getDataStore()?.getComment(event.commentUniqueId)
                 if (qiscusComment != null) {
-                    qiscusComment.state = QiscusComment.STATE_READ
-                    QiscusCore.getDataStore().addOrUpdate(qiscusComment)
+                    qiscusComment.status = QMessage.STATE_READ
+                    Const.qiscusCore()?.getDataStore()?.addOrUpdate(qiscusComment)
                     QiscusAndroidUtil.runOnUIThread {
                         view?.updateComment(qiscusComment)
                     }
@@ -442,48 +444,48 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
         }
     }
 
-    private fun onGotNewComment(qiscusComment: QiscusComment) {
-        if (qiscusComment.senderEmail.equals(qiscusAccount.email, ignoreCase = true)) {
-            QiscusAndroidUtil.runOnBackgroundThread { commentSuccess(qiscusComment) }
-        } else {
-            roomEventHandler.onGotComment(qiscusComment)
-        }
-
-        if (qiscusComment.roomId == room.id) {
+    private fun onGotNewComment(qiscusComment: QMessage) {
+        if (qiscusComment.chatRoomId == room.id) {
             QiscusAndroidUtil.runOnBackgroundThread {
-                if (!qiscusComment.senderEmail.equals(
-                        qiscusAccount.email,
+                if (!qiscusComment.sender.id.equals(
+                        qiscusAccount?.id,
                         ignoreCase = true
-                    ) && QiscusCacheManager.getInstance().lastChatActivity.first!!
+                    ) && Const.qiscusCore()?.cacheManager?.lastChatActivity?.first!!
                 ) {
-                    QiscusPusherApi.getInstance().markAsRead(room.id, qiscusComment.id)
+                    Const.qiscusCore()?.pusherApi?.markAsRead(room.id, qiscusComment.id)
                 }
             }
             view?.onNewComment(qiscusComment)
         }
-        if (qiscusComment.type == QiscusComment.Type.SYSTEM_EVENT) {
-            QiscusApi.getInstance().getChatRoomInfo(room.id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { chatRoom ->
-                    chatRoom.options.getBoolean("is_resolved").let {
+        if (qiscusComment.type == QMessage.Type.SYSTEM_EVENT) {
+            Const.qiscusCore()?.api?.getChatRoomInfo(room.id)
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe { chatRoom ->
+                    chatRoom.extras.getBoolean("is_resolved").let {
                         view?.showNewChatButton(it)
                     }
                 }
         }
+
+        if (qiscusComment.sender.id.equals(qiscusAccount?.id, ignoreCase = true)) {
+            QiscusAndroidUtil.runOnBackgroundThread { commentSuccess(qiscusComment) }
+        } else {
+            roomEventHandler.onGotComment(qiscusComment)
+        }
     }
 
-    fun deleteComment(comment: QiscusComment) {
+    fun deleteComment(comment: QMessage) {
         view?.showLoading()
-        QiscusAndroidUtil.runOnBackgroundThread { QiscusCore.getDataStore().delete(comment) }
+        QiscusAndroidUtil.runOnBackgroundThread { Const.qiscusCore()?.getDataStore()?.delete(comment) }
         view?.dismissLoading()
         view?.onCommentDeleted(comment)
 
-        QiscusApi.getInstance().deleteMessages(listOf(comment.uniqueId))
-            .flatMap { Observable.from(it) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+        Const.qiscusCore()?.api?.deleteMessages(listOf(comment.uniqueId))
+            ?.flatMap { Observable.from(it) }
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe({
                 view?.dismissLoading()
                 view?.onCommentDeleted(it)
             }, {
@@ -502,7 +504,7 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
         }
     }
 
-    override fun onChatRoomMemberRemoved(member: QiscusRoomMember?) {
+    override fun onChatRoomMemberRemoved(member: QParticipant?) {
 
     }
 
@@ -510,7 +512,7 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
         view?.onUserTyping(email, typing)
     }
 
-    override fun onChatRoomMemberAdded(member: QiscusRoomMember?) {
+    override fun onChatRoomMemberAdded(member: QParticipant?) {
 
     }
 
@@ -527,25 +529,25 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
 
         fun showError(message: String)
 
-        fun initRoomData(comments: List<QiscusComment>, qiscusChatRoom: QiscusChatRoom)
+        fun initRoomData(comments: List<QMessage>, qiscusChatRoom: QChatRoom)
 
-        fun onSuccessSendComment(comment: QiscusComment)
+        fun onSuccessSendComment(comment: QMessage)
 
-        fun onFailedSendComment(comment: QiscusComment)
+        fun onFailedSendComment(comment: QMessage)
 
-        fun onLoadMoreComments(comments: List<QiscusComment>)
+        fun onLoadMoreComments(comments: List<QMessage>)
 
-        fun onNewComment(comment: QiscusComment)
+        fun onNewComment(comment: QMessage)
 
-        fun onCommentDeleted(comment: QiscusComment)
+        fun onCommentDeleted(comment: QMessage)
 
-        fun onSendingComment(comment: QiscusComment)
+        fun onSendingComment(comment: QMessage)
 
         fun updateLastDeliveredComment(lastDeliveredCommentId: Long)
 
         fun updateLastReadComment(lastReadCommentId: Long)
 
-        fun updateComment(comment: QiscusComment)
+        fun updateComment(comment: QMessage)
 
         fun onUserTyping(email: String?, isTyping: Boolean)
 

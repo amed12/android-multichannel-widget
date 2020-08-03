@@ -882,8 +882,8 @@ public class QiscusTouchImageView extends AppCompatImageView {
     private void printMatrixInfo() {
         float[] n = new float[9];
         matrix.getValues(n);
-        QiscusLogger.print("TouchImageView", DEBUG + "Scale: " + n[Matrix.MSCALE_X] + " TransX: "
-                + n[Matrix.MTRANS_X] + " TransY: " + n[Matrix.MTRANS_Y]);
+       // QiscusLogger.print("TouchImageView", DEBUG + "Scale: " + n[Matrix.MSCALE_X] + " TransX: "
+       //         + n[Matrix.MTRANS_X] + " TransY: " + n[Matrix.MTRANS_Y]);
     }
 
     private enum State {

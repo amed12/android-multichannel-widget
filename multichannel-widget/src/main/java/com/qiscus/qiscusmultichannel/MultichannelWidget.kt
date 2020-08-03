@@ -8,14 +8,13 @@ import com.qiscus.nirmana.Nirmana
 import com.qiscus.qiscusmultichannel.data.model.UserProperties
 import com.qiscus.qiscusmultichannel.ui.chat.ChatRoomActivity
 import com.qiscus.qiscusmultichannel.ui.loading.LoadingActivity
+import com.qiscus.qiscusmultichannel.util.Const
 import com.qiscus.qiscusmultichannel.util.PNUtil
 import com.qiscus.qiscusmultichannel.util.QiscusChatLocal
 import com.qiscus.sdk.chat.core.QiscusCore
-import com.qiscus.sdk.chat.core.data.model.QiscusAccount
-import com.qiscus.sdk.chat.core.data.model.QiscusChatRoom
+import com.qiscus.sdk.chat.core.data.model.QAccount
+import com.qiscus.sdk.chat.core.data.model.QChatRoom
 import com.qiscus.sdk.chat.core.data.model.QiscusNonce
-import com.qiscus.sdk.chat.core.data.remote.QiscusApi
-import com.qiscus.sdk.chat.core.util.QiscusFirebaseMessagingUtil
 import org.json.JSONObject
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -52,21 +51,24 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
             }
 
         @JvmStatic
-        fun setup(application: Application, applicationId: String) {
-            setup(application, applicationId, MultichannelWidgetConfig)
+        fun setup(application: Application, qiscusCore: QiscusCore, applicationId: String, localPrefKey: String) {
+            setup(application, qiscusCore, applicationId, MultichannelWidgetConfig, localPrefKey)
         }
 
         @JvmStatic
         fun setup(
             application: Application,
+            qiscusCore: QiscusCore,
             applicationId: String,
-            config: MultichannelWidgetConfig
+            config: MultichannelWidgetConfig,
+            localPrefKey : String
         ) {
+            Const.setQiscusCore(qiscusCore)
             INSTANCE = MultichannelWidget(MultichannelWidgetComponent())
-            QiscusCore.setup(application, applicationId)
-            QiscusCore.getChatConfig()
-                .setEnableFcmPushNotification(true)
-                .setNotificationListener { context, qiscusComment ->
+            Const.qiscusCore()?.setup(application, applicationId, localPrefKey)
+            Const.qiscusCore()?.getChatConfig()
+                ?.setEnableFcmPushNotification(true)
+                ?.setNotificationListener { context, qiscusComment ->
 
                     if (!config.isEnableNotification()) {
                         return@setNotificationListener
@@ -82,7 +84,7 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
                         PNUtil.showPn(context, qiscusComment)
                     }
                 }
-                .enableDebugMode(config.isEnableLog())
+                ?.enableDebugMode(config.isEnableLog())
             this.config = config
             this.application = application
             Nirmana.init(application)
@@ -102,7 +104,7 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
         avatar: String?,
         extras: String,
         userProperties: List<UserProperties>,
-        onSuccess: (QiscusAccount) -> Unit,
+        onSuccess: (QAccount) -> Unit,
         onError: (Throwable) -> Unit
     ) {
 
@@ -111,9 +113,9 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
                 QiscusChatLocal.setRoomId(it)
             }
             it.data.identityToken?.let {
-                QiscusCore.setUserWithIdentityToken(it,
+                Const.qiscusCore()?.setUserWithIdentityToken(it,
                     object : QiscusCore.SetUserListener {
-                        override fun onSuccess(qiscusAccount: QiscusAccount) {
+                        override fun onSuccess(qiscusAccount: QAccount) {
                             onSuccess(qiscusAccount)
                         }
 
@@ -131,21 +133,20 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
      *
      */
     fun getNonce(onSuccess: (QiscusNonce) -> Unit, onError: (Throwable) -> Unit) {
-        QiscusApi.getInstance()
-            .jwtNonce
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onSuccess, onError)
+        Const.qiscusCore()?.api?.jwtNonce
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(onSuccess, onError)
     }
 
     /**
      *
      */
-    fun setUser(token: String, onSuccess: (QiscusAccount) -> Unit, onError: (Throwable) -> Unit) {
-        QiscusCore.setUserWithIdentityToken(token)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onSuccess, onError)
+    fun setUser(token: String, onSuccess: (QAccount) -> Unit, onError: (Throwable) -> Unit) {
+        Const.qiscusCore()?.api?.setUserWithIdentityToken(token)
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(onSuccess, onError)
     }
 
     /**
@@ -155,15 +156,15 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
         userId: String,
         userKey: String,
         username: String,
-        onSuccess: (QiscusAccount) -> Unit,
+        onSuccess: (QAccount) -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        QiscusCore.setUser(userId, userKey)
-            .withUsername(username)
-            .save()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+        Const.qiscusCore()?.setUser(userId, userKey)
+            ?.withUsername(username)
+            ?.save()
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe({
                 onSuccess(it)
             }, onError)
 
@@ -172,12 +173,12 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
 
     fun updateUser(
         username: String, avatarUrl: String, extras: JSONObject?,
-        onSuccess: (QiscusAccount?) -> Unit,
+        onSuccess: (QAccount?) -> Unit,
         onError: (Throwable?) -> Unit
     ) {
-        QiscusCore.updateUser(username, avatarUrl, extras,
+        Const.qiscusCore()?.updateUser(username, avatarUrl, extras,
             object : QiscusCore.SetUserListener {
-                override fun onSuccess(qiscusAccount: QiscusAccount?) {
+                override fun onSuccess(qiscusAccount: QAccount?) {
                     onSuccess(qiscusAccount)
                 }
 
@@ -191,7 +192,7 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
      *
      */
 
-    private fun hasSetupUser(): Boolean = QiscusCore.hasSetupUser()
+    private fun hasSetupUser(): Boolean = Const.qiscusCore()?.hasSetupUser()!!
 
 
     fun openChatRoomById(
@@ -204,30 +205,35 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
         }
 
         openChatRoomById(roomId, {
-            ChatRoomActivity.generateIntent(context, it)
-        }, { onError(it) })
+            context.startActivity(ChatRoomActivity.generateIntent(context, it))
+        }, {
+            onError(it)
+        })
     }
 
     fun openChatRoomById(
         roomId: Long,
-        onSuccess: (QiscusChatRoom) -> Unit,
+        onSuccess: (QChatRoom) -> Unit,
         onError: (Throwable) -> Unit
     ) {
         if (!hasSetupUser()) {
             onError(Throwable("Please set user first"))
         }
-        QiscusApi.getInstance().getChatRoomInfo(roomId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+        Const.qiscusCore()?.api?.getChatRoomInfo(roomId)
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.doOnNext({ qiscusChatRoom ->
+                Const.qiscusCore()!!.dataStore.addOrUpdate(qiscusChatRoom)
+            })
+            ?.subscribe({
                 onSuccess(it)
             }, {
                 onError(it)
             })
     }
 
-    fun getQiscusAccount(): QiscusAccount {
-        return QiscusCore.getQiscusAccount()
+    fun getQiscusAccount(): QAccount {
+        return Const.qiscusCore()?.getQiscusAccount()!!
     }
 
     fun openChatRoomMultichannel() {
@@ -239,7 +245,8 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
         }
     }
 
-    fun initiateChat(context: Context, name: String, userId: String, avatar: String, extras: JSONObject?, userProperties: Map<String, String>?) {
+    fun initiateChat(context: Context, qiscusCore : QiscusCore, name: String, userId: String, avatar: String, extras: JSONObject?, userProperties: Map<String, String>?) {
+        Const.setQiscusCore(qiscusCore)
         var userProp: MutableList<UserProperties> = ArrayList()
         userProperties?.let {
              for ((k,v) in it) {
@@ -252,20 +259,25 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
     }
 
     fun firebaseMessagingUtil(remoteMessage: RemoteMessage) {
-        QiscusFirebaseMessagingUtil.handleMessageReceived(remoteMessage)
+        Const.qiscusCore()?.firebaseMessagingUtil?.handleMessageReceived(remoteMessage)
     }
 
     fun getAppId(): String {
-        return QiscusCore.getAppId()
+        return Const.qiscusCore()?.getAppId()!!
     }
 
-    fun isMultichannelMessage(remoteMessage: RemoteMessage): Boolean {
+    fun isMultichannelMessage(remoteMessage: RemoteMessage, qiscusCores: MutableList<QiscusCore>): Boolean {
+        Const.setAllQiscusCore(qiscusCores)
         try {
-            val msg = JSONObject(remoteMessage.data.get("payload")).get("room_options").toString()
-            if (JSONObject(msg).get("app_code") == appId) {
-                QiscusFirebaseMessagingUtil.handleMessageReceived(remoteMessage)
-                return true
+            val roomId = JSONObject(remoteMessage.data.get("payload")).getLong("room_id")
+            for (qiscusCore in qiscusCores) {
+                val roomDB = qiscusCore.getDataStore().getChatRoom(roomId)
+                if (roomDB != null) {
+                    qiscusCore.firebaseMessagingUtil?.handleMessageReceived(remoteMessage)
+                }
             }
+
+            return true
 
         } catch (e: Exception) {
             return false
@@ -275,7 +287,9 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
 
     }
 
-    fun registerDeviceToken(token: String) {
-        QiscusCore.registerDeviceToken(token)
+    fun registerDeviceToken(qiscusCore: QiscusCore, token: String) {
+        if (qiscusCore.hasSetupUser()!!) {
+            qiscusCore.registerDeviceToken(token)
+        }
     }
 }

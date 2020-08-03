@@ -9,13 +9,16 @@ import android.text.style.ClickableSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.util.PatternsCompat
 import com.qiscus.qiscusmultichannel.R
 import com.qiscus.qiscusmultichannel.ui.view.QiscusProgressView
+import com.qiscus.qiscusmultichannel.util.Const
+import com.qiscus.qiscusmultichannel.util.QiscusImageUtil
 import com.qiscus.qiscusmultichannel.util.webView.WebViewHelper
-import com.qiscus.sdk.chat.core.QiscusCore
-import com.qiscus.sdk.chat.core.data.model.QiscusComment
-import org.json.JSONObject
+import com.qiscus.sdk.chat.core.data.model.QMessage
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import java.util.regex.Matcher
 
 /**
@@ -23,42 +26,55 @@ import java.util.regex.Matcher
  * Author     : Taufik Budi S
  * Github     : https://github.com/tfkbudi
  */
-class FileVH(itemView: View) : BaseViewHolder(itemView), QiscusComment.ProgressListener,
-    QiscusComment.DownloadingListener {
+class FileVH(itemView: View) : BaseViewHolder(itemView), QMessage.ProgressListener,
+    QMessage.DownloadingListener {
 
     private val tvTitle: TextView? = itemView.findViewById(R.id.tvTitle)
     private val message: TextView? = itemView.findViewById(R.id.message)
     private val ivDownloadIcon: ImageView? = itemView.findViewById(R.id.ivDownloadIcon)
     private val progressView: QiscusProgressView? =
         itemView.findViewById<View>(R.id.qcpProgressView) as QiscusProgressView?
-    lateinit var qiscusComment: QiscusComment
+    lateinit var qiscusComment: QMessage
 
     @SuppressLint("SetTextI18n")
-    override fun bind(comment: QiscusComment) {
+    override fun bind(comment: QMessage) {
         super.bind(comment)
 
         this.qiscusComment = comment
-        comment.setProgressListener(this)
-        comment.setDownloadingListener(this)
         setUpDownloadIcon(comment)
         setUpLinks()
         try {
-            val content = JSONObject(comment.extraPayload)
+            val content = comment.payload
             val title = content.getString("file_name")
             val url = content.getString("url")
             val tipe = url.split(".")
             tvTitle?.text = title.toString()
             message?.text = "${tipe[tipe.size - 1].toUpperCase()} File"
+
+            tvTitle?.setOnClickListener(View.OnClickListener {
+                val localPath =
+                    Const.qiscusCore()!!.dataStore.getLocalPath(comment.id)
+                if (localPath != null) {
+                    QiscusImageUtil.addImageToGallery(localPath)
+                    Toast.makeText(itemView.context, "File already save", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    downloadFile(comment, title, url)
+                }
+            })
+
         } catch (ex: Exception) {
 
         }
 
-        if (QiscusCore.getDataStore().getLocalPath(comment.id) != null) {
+        if (Const.qiscusCore()?.getDataStore()?.getLocalPath(comment.id) != null) {
             ivDownloadIcon?.visibility = View.GONE
         }
+
+
     }
 
-    override fun onProgress(qiscusComment: QiscusComment?, percentage: Int) {
+    override fun onProgress(qiscusComment: QMessage?, percentage: Int) {
         ivDownloadIcon?.visibility = View.GONE
         progressView?.setVisibility(View.GONE)
 
@@ -67,24 +83,51 @@ class FileVH(itemView: View) : BaseViewHolder(itemView), QiscusComment.ProgressL
         }
     }
 
-    override fun onDownloading(qiscusComment: QiscusComment?, downloading: Boolean) {
+    override fun onDownloading(qiscusComment: QMessage?, downloading: Boolean) {
         ivDownloadIcon?.visibility = View.GONE
         if (qiscusComment == this.qiscusComment && progressView != null) {
             progressView.setVisibility(if (downloading) View.VISIBLE else View.GONE)
         }
     }
 
-    private fun setUpDownloadIcon(qiscusComment: QiscusComment) {
-        qiscusComment.isMyComment
+    fun downloadFile(
+        qiscusComment: QMessage,
+        fileName: String?,
+        URLFile: String?
+    ) {
+        Const.qiscusCore()!!.api
+            .downloadFile(URLFile, fileName) { total -> }
+            .doOnNext { file ->
+                // here we update the local path of file
+                Const.qiscusCore()!!.dataStore
+                    .addOrUpdateLocalPath(
+                        qiscusComment.chatRoomId,
+                        qiscusComment.id,
+                        file.absolutePath
+                    )
+                QiscusImageUtil.addImageToGallery(file)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ file ->
+                //on success
+                Toast.makeText(itemView.context, "Success save file", Toast.LENGTH_SHORT)
+                    .show()
+            }) { throwable -> }
+    }
+
+    private fun setUpDownloadIcon(qiscusComment: QMessage) {
+        val me = Const.qiscusCore()?.getQiscusAccount()?.getId()
+        qiscusComment.isMyComment(me)
         if (ivDownloadIcon != null) {
-            if (qiscusComment.state <= QiscusComment.STATE_SENDING) {
-                if (qiscusComment.isMyComment) {
+            if (qiscusComment.status <= QMessage.STATE_SENDING) {
+                if (qiscusComment.isMyComment(me)) {
                     ivDownloadIcon.setImageResource(R.drawable.ic_qiscus_upload_file_mc)
                 } else {
                     ivDownloadIcon.setImageResource(R.drawable.ic_qiscus_opponent_upload_file_mc)
                 }
             } else {
-                if (qiscusComment.isMyComment) {
+                if (qiscusComment.isMyComment(me)) {
                     ivDownloadIcon.setImageResource(R.drawable.ic_qiscus_download_file)
                 } else {
                     ivDownloadIcon.setImageResource(R.drawable.ic_qiscus_opponent_download_file)
@@ -93,7 +136,7 @@ class FileVH(itemView: View) : BaseViewHolder(itemView), QiscusComment.ProgressL
         }
     }
 
-    @SuppressLint("DefaultLocale")
+    @SuppressLint("DefaultLocale", "RestrictedApi")
     private fun setUpLinks() {
         val text = message?.text.toString().toLowerCase()
         val matcher: Matcher = PatternsCompat.AUTOLINK_WEB_URL.matcher(text)
