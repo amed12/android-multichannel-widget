@@ -10,6 +10,7 @@ import com.qiscus.sdk.chat.core.custom.data.remote.QiscusPusherApi
 import com.qiscus.sdk.chat.core.custom.event.QiscusChatRoomEvent
 import com.qiscus.sdk.chat.core.custom.event.QiscusCommentDeletedEvent
 import com.qiscus.sdk.chat.core.custom.event.QiscusCommentReceivedEvent
+import com.qiscus.sdk.chat.core.custom.event.QiscusMqttStatusEvent
 import com.qiscus.sdk.chat.core.custom.presenter.QiscusChatRoomEventHandler
 import com.qiscus.sdk.chat.core.custom.util.QiscusAndroidUtil
 import com.qiscus.sdk.chat.core.custom.util.QiscusFileUtil
@@ -449,7 +450,18 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
         QiscusAndroidUtil.runOnUIThread { view?.onCommentDeleted(event.qiscusComment) }
     }
 
+    @Subscribe
+    fun onMqttEvent(event: QiscusMqttStatusEvent) {
+        if (event === QiscusMqttStatusEvent.CONNECTED){
+            loadComments(20)
+        }
+    }
+
     private fun onGotNewComment(qiscusComment: QiscusComment) {
+        if (!QiscusCore.getDataStore().isContains(qiscusComment)) {
+            QiscusCore.getDataStore().addOrUpdate(qiscusComment)
+        }
+
         if (qiscusComment.senderEmail.equals(qiscusAccount.email, ignoreCase = true)) {
             QiscusAndroidUtil.runOnBackgroundThread { commentSuccess(qiscusComment) }
         } else {
