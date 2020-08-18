@@ -58,6 +58,7 @@ class CommentsAdapter(val context: Context) :
             QiscusComment.Type.SYSTEM_EVENT -> return TYPE_EVENT
             QiscusComment.Type.CARD -> return TYPE_CARD
             QiscusComment.Type.CAROUSEL -> return TYPE_CAROUSEL
+            QiscusComment.Type.BUTTONS -> return TYPE_BUTTONS
             else -> return TYPE_NOT_SUPPORT
         }
     }
@@ -86,6 +87,8 @@ class CommentsAdapter(val context: Context) :
                 .inflate(R.layout.item_card_mc, parent, false)
             TYPE_CAROUSEL -> return LayoutInflater.from(context)
                 .inflate(R.layout.item_carousel_mc, parent, false)
+            TYPE_BUTTONS -> return LayoutInflater.from(context)
+                .inflate(R.layout.item_buttons_mc, parent, false)
             else -> return LayoutInflater.from(context).inflate(R.layout.item_message_not_supported_mc, parent, false)
         }
     }
@@ -99,6 +102,8 @@ class CommentsAdapter(val context: Context) :
             TYPE_MY_FILE, TYPE_OPPONENT_FILE -> FileVH(getView(parent, viewType))
             TYPE_CARD -> CardVH(getView(parent, viewType))
             TYPE_CAROUSEL -> CarouselVH(getView(parent, viewType))
+            TYPE_BUTTONS -> ButtonMessageVH(getView(parent, viewType))
+
             else -> NoSupportVH(getView(parent,viewType))
         }
     }
@@ -227,4 +232,5 @@ class CommentsAdapter(val context: Context) :
     private val TYPE_EVENT = 9
     private val TYPE_CARD = 10
     private val TYPE_CAROUSEL = 11
+    private val TYPE_BUTTONS = 12
 }

@@ -63,20 +63,32 @@
         tools:text="Rp. 200Sandal jepit nikmat rasa ayam"
         android:focusable="true" />
 
-    <Button
-        android:id="@+id/btn_msg"
-        style="?android:attr/borderlessButtonStyle"
+    <LinearLayout
+        android:id="@+id/buttons_container"
         android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@android:color/transparent"
-        android:textAllCaps="false"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/view3"
         app:layout_constraintStart_toStartOf="@+id/view3"
-        app:layout_constraintTop_toBottomOf="@+id/view5"
-        tools:text="Button" />
+        app:layout_constraintTop_toBottomOf="@+id/view5"/>
+
+<!--    <Button-->
+<!--        android:id="@+id/btn_msg"-->
+<!--        style="?android:attr/borderlessButtonStyle"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        android:background="@android:color/transparent"-->
+<!--        android:textAllCaps="false"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/view3"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/view3"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/view5"-->
+<!--        tools:text="Button" />-->
 
     <View
         android:id="@+id/view5"
