@@ -443,6 +443,10 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
     }
 
     private fun onGotNewComment(qiscusComment: QiscusComment) {
+        if (!QiscusCore.getDataStore().isContains(qiscusComment)) {
+            QiscusCore.getDataStore().addOrUpdate(qiscusComment)
+        }
+
         if (qiscusComment.senderEmail.equals(qiscusAccount.email, ignoreCase = true)) {
             QiscusAndroidUtil.runOnBackgroundThread { commentSuccess(qiscusComment) }
         } else {
