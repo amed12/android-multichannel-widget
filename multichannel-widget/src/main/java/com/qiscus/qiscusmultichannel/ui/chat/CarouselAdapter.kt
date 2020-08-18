@@ -1,5 +1,6 @@
 package com.qiscus.qiscusmultichannel.ui.chat
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +21,7 @@ import org.json.JSONObject
  * GitHub     : https://github.com/arioki
  */
 
-class CarouselAdapter(val mData: JSONArray, val qiscusComment: QMessage) :
+class CarouselAdapter(var context: Context, val mData: JSONArray, val qiscusComment: QMessage) :
     RecyclerView.Adapter<BaseViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_card_mc, parent, false)
@@ -39,6 +40,6 @@ class CarouselAdapter(val mData: JSONArray, val qiscusComment: QMessage) :
                 qiscusComment.text,
                 mData[position] as JSONObject?
             )
-        holder.bind(qiscusComment)
+        holder.bind(context, qiscusComment)
     }
 }

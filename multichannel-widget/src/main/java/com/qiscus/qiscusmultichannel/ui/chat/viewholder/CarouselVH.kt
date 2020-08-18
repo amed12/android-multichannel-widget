@@ -1,5 +1,6 @@
 package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
+import android.content.Context
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.qiscus.qiscusmultichannel.ui.chat.CarouselAdapter
@@ -15,11 +16,11 @@ import org.json.JSONObject
  */
 
 class CarouselVH(itemView: View) : BaseViewHolder(itemView) {
-    override fun bind(comment: QMessage) {
-        super.bind(comment)
+    override fun bind(context: Context, comment: QMessage) {
+        super.bind(context, comment)
         val payload = comment.payload
         payload.getJSONArray("cards")?.let {
-            val adapter = CarouselAdapter(it, comment)
+            val adapter = CarouselAdapter(context, it, comment)
             val rvCarousel = itemView.rv_carousel
             rvCarousel.layoutManager =
                 LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)

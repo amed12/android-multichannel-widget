@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnOpen2.setOnClickListener {
-            MultichannelWidget.instance.initiateChat(this, ConstCore.qiscusCore2(), "taufik dev1", "taufik1@qiscus.net","", null, userProperties)
+            MultichannelWidget.instance.initiateChat(this, ConstCore.qiscusCore2(), "taufik dev2", "taufik2@qiscus.net","", null, userProperties)
         }
     }
 }

@@ -2,6 +2,7 @@ package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -42,8 +43,8 @@ class ImageVH(itemView: View) : BaseViewHolder(itemView) {
     private val sender: TextView? = itemView.findViewById(R.id.sender)
     private val dateOfMessage: TextView? = itemView.findViewById(R.id.dateOfMessage)
 
-    override fun bind(comment: QMessage) {
-        super.bind(comment)
+    override fun bind(context: Context, comment: QMessage) {
+        super.bind(context, comment)
 
         try {
             val content = comment.payload

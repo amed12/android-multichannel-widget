@@ -1,6 +1,7 @@
 package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.net.Uri
 import android.text.Spannable
 import android.text.SpannableString
@@ -27,8 +28,8 @@ class TextVH(itemView: View) : BaseViewHolder(itemView) {
     private val sender: TextView? = itemView.findViewById(R.id.sender)
     private val dateOfMessage: TextView? = itemView.findViewById(R.id.dateOfMessage)
 
-    override fun bind(comment: QMessage) {
-        super.bind(comment)
+    override fun bind(context: Context, comment: QMessage) {
+        super.bind(context, comment)
         message.text = comment.text
         val chatRoom = Const.qiscusCore()?.getDataStore()?.getChatRoom(comment.getChatRoomId());
 

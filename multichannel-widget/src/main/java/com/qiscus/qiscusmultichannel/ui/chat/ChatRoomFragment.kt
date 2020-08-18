@@ -30,16 +30,12 @@ import com.qiscus.qiscusmultichannel.R
 import com.qiscus.qiscusmultichannel.ui.chat.image.SendImageConfirmationActivity
 import com.qiscus.qiscusmultichannel.ui.view.QiscusChatScrollListener
 import com.qiscus.qiscusmultichannel.util.*
-import com.qiscus.sdk.chat.core.QiscusCore
-import com.qiscus.sdk.chat.core.data.local.QiscusCacheManager
 import com.qiscus.sdk.chat.core.data.model.QChatRoom
 import com.qiscus.sdk.chat.core.data.model.QMessage
 import com.qiscus.sdk.chat.core.data.model.QiscusPhoto
-import com.qiscus.sdk.chat.core.data.remote.QiscusPusherApi
 import com.qiscus.sdk.chat.core.util.QiscusFileUtil
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_chat_room_mc.*
-import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
@@ -332,6 +328,13 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
     fun sendComment(message: String) {
         clearSelectedComment()
         presenter.sendComment(message)
+    }
+
+    fun updateCommentVH(comment : QMessage) {
+        commentsAdapter.addOrUpdate(comment)
+        if ((rvMessage.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() <= 2) {
+            rvMessage.smoothScrollToPosition(0)
+        }
     }
 
     fun deleteComment() {
@@ -664,5 +667,9 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
 
     interface OnUserTypingListener {
         fun onUserTyping(email: String?, isTyping: Boolean)
+    }
+
+    interface IMethodCaller {
+        fun comment()
     }
 }

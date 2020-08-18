@@ -1,6 +1,7 @@
 package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.net.Uri
 import android.text.Spannable
 import android.text.SpannableString
@@ -26,8 +27,8 @@ import java.util.regex.Matcher
 class ReplyVH(itemView: View) : BaseViewHolder(itemView) {
     private val qiscusAccount = Const.qiscusCore()?.getQiscusAccount()
     private val message = itemView.message
-    override fun bind(comment: QMessage) {
-        super.bind(comment)
+    override fun bind(context: Context, comment: QMessage) {
+        super.bind(context, comment)
         val origin = comment.replyTo
 
         itemView.origin_sender?.text =

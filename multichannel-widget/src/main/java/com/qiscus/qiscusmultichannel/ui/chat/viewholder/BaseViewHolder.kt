@@ -1,5 +1,6 @@
 package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
+import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.view.View
@@ -37,7 +38,7 @@ open class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         ColorDrawable(ContextCompat.getColor(itemView.context, R.color.qiscus_selected_mc))
     var pstn = 0
 
-    open fun bind(comment: QMessage) {
+    open fun bind(context: Context, comment: QMessage) {
         avatar?.let {
             Nirmana.getInstance().get()
                 .setDefaultRequestOptions(

@@ -445,6 +445,10 @@ class ChatRoomPresenter(var room: QChatRoom) : QiscusChatRoomEventHandler.StateL
     }
 
     private fun onGotNewComment(qiscusComment: QMessage) {
+        if (!Const.qiscusCore()?.getDataStore()!!.isContains(qiscusComment)) {
+            Const.qiscusCore()?.getDataStore()!!.addOrUpdate(qiscusComment)
+        }
+
         if (qiscusComment.chatRoomId == room.id) {
             QiscusAndroidUtil.runOnBackgroundThread {
                 if (!qiscusComment.sender.id.equals(

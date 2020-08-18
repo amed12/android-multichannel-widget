@@ -9,7 +9,9 @@ import com.qiscus.qiscusmultichannel.data.repository.response.ResponseInitiateCh
 import com.qiscus.qiscusmultichannel.util.Const
 import com.qiscus.sdk.chat.core.QiscusCore
 import com.qiscus.sdk.chat.core.QiscusCore.OnSendMessageListener
+import com.qiscus.sdk.chat.core.data.model.QAccount
 import com.qiscus.sdk.chat.core.data.model.QMessage
+import com.qiscus.sdk.chat.core.data.model.QUser
 import com.qiscus.sdk.chat.core.data.remote.QiscusApi
 import com.qiscus.sdk.chat.core.data.remote.QiscusPusherApi
 import org.json.JSONObject
@@ -29,12 +31,23 @@ class ChatroomRepositoryImpl : ChatroomRepository {
         onSuccess: (QMessage) -> Unit,
         onError: (Throwable) -> Unit
     ) {
+
+        val qAccount: QAccount = Const.qiscusCore()?.getQiscusAccount()!!
+        val qUser = QUser()
+        qUser.avatarUrl = qAccount.avatarUrl
+        qUser.id = qAccount.id
+        qUser.extras = qAccount.extras
+        qUser.name = qAccount.name
+        message.setSender(qUser)
+
         Const.qiscusCore()!!.sendMessage(message, object : OnSendMessageListener {
             override fun onSending(qiscusComment: QMessage) {
                 Const.qiscusCore()!!.dataStore.addOrUpdate(qiscusComment)
             }
 
             override fun onSuccess(qiscusComment: QMessage) {
+                qiscusComment.status = QMessage.STATE_SENT
+                Const.qiscusCore()?.getDataStore()!!.addOrUpdate(qiscusComment)
                 if (qiscusComment.chatRoomId == roomId) {
                     onSuccess(qiscusComment)
                 }

@@ -8,7 +8,6 @@ import com.qiscus.qiscusmultichannel.R
 import com.qiscus.qiscusmultichannel.ui.chat.viewholder.*
 import com.qiscus.qiscusmultichannel.util.Const
 import com.qiscus.sdk.chat.core.data.model.QMessage
-import com.qiscus.sdk.chat.core.util.QiscusAndroidUtil
 import com.qiscus.sdk.chat.core.util.QiscusDateUtil
 
 /**
@@ -60,6 +59,8 @@ class CommentsAdapter(val context: Context) :
             QMessage.Type.SYSTEM_EVENT -> return TYPE_EVENT
             QMessage.Type.CARD -> return TYPE_CARD
             QMessage.Type.CAROUSEL -> return TYPE_CAROUSEL
+            QMessage.Type.BUTTONS -> return TYPE_BUTTONS
+
             else -> return TYPE_NOT_SUPPORT
         }
     }
@@ -88,6 +89,8 @@ class CommentsAdapter(val context: Context) :
                 .inflate(R.layout.item_card_mc, parent, false)
             TYPE_CAROUSEL -> return LayoutInflater.from(context)
                 .inflate(R.layout.item_carousel_mc, parent, false)
+            TYPE_BUTTONS -> return LayoutInflater.from(context)
+                .inflate(R.layout.item_buttons_mc, parent, false)
             else -> return LayoutInflater.from(context).inflate(R.layout.item_message_not_supported_mc, parent, false)
         }
     }
@@ -101,6 +104,8 @@ class CommentsAdapter(val context: Context) :
             TYPE_MY_FILE, TYPE_OPPONENT_FILE -> FileVH(getView(parent, viewType))
             TYPE_CARD -> CardVH(getView(parent, viewType))
             TYPE_CAROUSEL -> CarouselVH(getView(parent, viewType))
+            TYPE_BUTTONS -> ButtonMessageVH(getView(parent, viewType))
+
             else -> NoSupportVH(getView(parent,viewType))
         }
     }
@@ -108,7 +113,7 @@ class CommentsAdapter(val context: Context) :
     override fun getItemCount(): Int = data.size()
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        holder.bind(data.get(position))
+        holder.bind(context, data.get(position))
         holder.pstn = position
 
         holder.setNeedToShowName(false)
@@ -229,4 +234,5 @@ class CommentsAdapter(val context: Context) :
     private val TYPE_EVENT = 9
     private val TYPE_CARD = 10
     private val TYPE_CAROUSEL = 11
+    private val TYPE_BUTTONS = 12
 }

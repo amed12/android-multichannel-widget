@@ -149,6 +149,10 @@ class ChatRoomActivity : AppCompatActivity(), ChatRoomFragment.CommentSelectedLi
 
     }
 
+    fun updateCommentVH(comment : QMessage){
+        getChatFragment().updateCommentVH(comment)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         for (user in users) {

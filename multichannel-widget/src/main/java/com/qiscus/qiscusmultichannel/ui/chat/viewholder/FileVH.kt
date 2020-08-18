@@ -1,6 +1,7 @@
 package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.net.Uri
 import android.text.Spannable
 import android.text.SpannableString
@@ -37,8 +38,8 @@ class FileVH(itemView: View) : BaseViewHolder(itemView), QMessage.ProgressListen
     lateinit var qiscusComment: QMessage
 
     @SuppressLint("SetTextI18n")
-    override fun bind(comment: QMessage) {
-        super.bind(comment)
+    override fun bind(context: Context, comment: QMessage) {
+        super.bind(context, comment)
 
         this.qiscusComment = comment
         setUpDownloadIcon(comment)
