@@ -11,11 +11,11 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 
-    <com.qiscus.qiscusmultichannel.ui.chat.image.QiscusTouchImageView
+    <com.qiscus.qiscuschat.ui.chat.image.QiscusTouchImageView
         android:id="@+id/ivDialogView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:adjustViewBounds="true"
+        android:adjustViewBounds="false"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
     <androidx.appcompat.widget.Toolbar

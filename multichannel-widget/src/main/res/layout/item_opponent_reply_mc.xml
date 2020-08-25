@@ -21,37 +21,76 @@
     android:layout_height="wrap_content"
     android:visibility="visible">
 
-    <TextView
-        android:id="@+id/dateOfMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_date"
+    <LinearLayout
+        android:id="@+id/view6"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:gravity="center"
-        android:padding="10dp"
-        android:textSize="14sp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="yesterday" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvFirstIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:padding="10dp"
+            android:text="You've reached first page"
+            android:textColor="@color/qiscus_system_event"
+            android:textSize="12sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/dateOfMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:background="@drawable/rounded_date"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Date"
+            android:textColor="@color/qiscus_left_bubble_text_mc"
+            android:textSize="12sp"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/sender"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingBottom="6dp"
+        android:textColor="@color/qiscus_customer_text_mc"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/ll_message"
+        app:layout_constraintTop_toBottomOf="@+id/view6" />
 
     <LinearLayout
         android:id="@+id/ll_message"
         android:layout_width="236dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/dateOfMessage"
+        android:layout_below="@+id/view6"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginStart="12dp"
         android:layout_marginLeft="12dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:background="@drawable/qiscus_rounded_left_chat_bg_mc"
         android:orientation="vertical"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateOfMessage">
+        app:layout_constraintStart_toEndOf="@+id/avatar_driver"
+        app:layout_constraintTop_toBottomOf="@+id/sender">
 
         <LinearLayout
             android:id="@+id/ll_origin_message"
@@ -67,7 +106,7 @@
                 android:id="@+id/bar"
                 android:layout_width="4dp"
                 android:layout_height="match_parent"
-                android:background="@color/qiscus_grey_mc"
+                android:background="@color/colorAccent"
                 android:visibility="visible" />
 
             <LinearLayout
@@ -135,7 +174,7 @@
                 android:contentDescription="origin image"
                 android:scaleType="centerCrop"
                 android:visibility="visible"
-                tools:src="@drawable/avatar_cs" />
+                tools:src="@drawable/ic_default_avatar" />
 
         </LinearLayout>
 
@@ -151,7 +190,18 @@
             android:textColor="@color/qiscus_left_bubble_text_mc"
             android:textColorLink="@color/qiscus_color_opponent_link_mc"
             tools:text="Lorem Ipsum is dddddd" />
+
     </LinearLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/avatar_driver"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ll_message" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -159,7 +209,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:orientation="vertical"
         android:visibility="visible"
         app:layout_constraintStart_toEndOf="@+id/ll_message"

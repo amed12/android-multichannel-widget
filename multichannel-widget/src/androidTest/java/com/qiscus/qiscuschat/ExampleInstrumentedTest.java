@@ -1,4 +1,4 @@
-package com.qiscus.qiscusmultichannel;
+package com.qiscus.qiscuschat;
 
 import android.content.Context;
 

@@ -21,37 +21,61 @@
     android:layout_height="wrap_content"
     android:visibility="visible">
 
-    <TextView
-        android:id="@+id/dateOfMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_date"
+    <LinearLayout
+        android:id="@+id/view6"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:gravity="center"
-        android:padding="10dp"
-        android:textSize="14sp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="yesterday" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvFirstIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:padding="10dp"
+            android:text="You've reached first page"
+            android:textColor="@color/qiscus_system_event"
+            android:textSize="12sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/dateOfMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:background="@drawable/rounded_date"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Date"
+            android:textColor="@color/qiscus_left_bubble_text_mc"
+            android:textSize="12sp"
+            android:visibility="visible" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_message"
         android:layout_width="236dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/dateOfMessage"
+        android:layout_below="@+id/view6"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="4dp"
         android:background="@drawable/qiscus_rounded_right_buble_bg"
         android:orientation="vertical"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateOfMessage">
+        app:layout_constraintTop_toBottomOf="@+id/view6">
 
         <LinearLayout
             android:id="@+id/ll_origin_message"
@@ -66,7 +90,7 @@
                 android:id="@+id/bar"
                 android:layout_width="4dp"
                 android:layout_height="match_parent"
-                android:background="@color/qiscus_grey_mc"
+                android:background="@color/colorAccent"
                 android:visibility="visible" />
 
             <LinearLayout
@@ -133,7 +157,7 @@
                 android:layout_marginLeft="4dp"
                 android:scaleType="centerCrop"
                 android:visibility="visible"
-                tools:src="@drawable/avatar_cs"
+                tools:src="@drawable/ic_default_avatar"
                 android:contentDescription="origin image" />
 
         </LinearLayout>
@@ -150,13 +174,13 @@
             android:textSize="16sp"
             android:visibility="visible"
             tools:text="Lorem Ipsum is dddddd" />
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:orientation="vertical"
@@ -181,5 +205,7 @@
             android:layout_height="16dp"
             android:layout_gravity="end"
             android:visibility="visible" />
+
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

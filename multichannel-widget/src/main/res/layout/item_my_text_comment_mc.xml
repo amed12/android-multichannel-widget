@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -7,20 +8,35 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
+        android:gravity="center"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvFirstIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:padding="10dp"
+            android:text="You've reached first page"
+            android:textColor="@color/qiscus_system_event"
+            android:textSize="12sp"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/dateOfMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="12dp"
             android:background="@drawable/rounded_date"
             android:gravity="center"
             android:padding="10dp"
-            android:visibility="gone"
-            android:textSize="14sp" />
+            android:text="Date"
+            android:textColor="@color/qiscus_left_bubble_text_mc"
+            android:textSize="12sp"
+            android:visibility="visible" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -28,15 +44,15 @@
         android:layout_height="wrap_content"
         android:gravity="end"
         android:orientation="horizontal"
-        android:layout_marginTop="4dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp">
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="4dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
             android:gravity="bottom|end"
             android:orientation="vertical">
 
@@ -44,12 +60,11 @@
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:ellipsize="end"
                 android:gravity="end"
                 android:maxLines="1"
-                android:textSize="14sp"
-                android:textColor="@color/qiscus_date_bubble_mc" />
+                android:textColor="@color/qiscus_date_bubble_mc"
+                android:textSize="14sp" />
 
             <ImageView
                 android:id="@+id/state"
@@ -63,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="12dp"
             android:background="@drawable/qiscus_rounded_right_buble_bg"
             android:orientation="vertical"
             android:padding="8dp">
@@ -74,18 +89,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:autoLink="all"
+                android:gravity="center_vertical"
                 android:linksClickable="true"
+                android:minHeight="24dp"
                 android:textColor="@color/qiscus_right_bubble_text_mc"
                 android:textColorLink="@color/qiscus_color_my_link_mc"
                 android:textSize="14sp" />
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/avatar_driver"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:visibility="gone" />
 
     </LinearLayout>
 

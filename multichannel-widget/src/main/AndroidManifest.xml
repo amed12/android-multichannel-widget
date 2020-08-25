@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.qiscus.qiscusmultichannel">
+    package="com.qiscus.integrations.multichannel_sample">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application android:theme="@style/AppTheme">
-        <activity android:name=".ui.loading.LoadingActivity"></activity>
-        <activity android:name=".ui.chat.image.SendImageConfirmationActivity" />
-        <activity android:name=".ui.chat.ChatRoomActivity">
+        <activity android:name="com.qiscus.qiscuschat.ui.login.LoginActivity" />
+        <activity android:name="com.qiscus.qiscuschat.ui.loading.LoadingActivity" />
+        <activity android:name="com.qiscus.qiscuschat.ui.chat.image.SendImageConfirmationActivity" />
+        <activity android:name="com.qiscus.qiscuschat.ui.chat.ChatRoomActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="com.qiscus.example.mybb" />
@@ -33,15 +34,17 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
-        <activity android:name="com.qiscus.qiscusmultichannel.ui.webView.WebViewActivity" />
+        <activity android:name="com.qiscus.qiscuschat.ui.webView.WebViewActivity" />
 
         <receiver
-            android:name=".util.NotificationClickReceiver"
+            android:name="com.qiscus.qiscuschat.util.NotificationClickReceiver"
             android:exported="false">
             <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="com.qiscus.OPEN_COMMENT_PN" />
             </intent-filter>
         </receiver>
+
     </application>
 
 </manifest>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.chat.image.SendImageConfirmationActivity">
+    tools:context="com.qiscus.qiscuschat.ui.chat.image.SendImageConfirmationActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -13,17 +13,64 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
-        <androidx.appcompat.widget.Toolbar
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="60dp"
             android:background="@color/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:titleTextColor="@color/colorAccent">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:src="@drawable/ic_back_white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:gravity="center"
+                android:textAllCaps="false"
+                android:textColor="@color/qiscus_white_mc"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/avatar"
+                app:layout_constraintTop_toBottomOf="parent" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/avatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:src="@drawable/ic_default_avatar"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btn_back"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ImageView
+    <com.qiscus.qiscuschat.ui.chat.image.QiscusTouchImageView
         android:id="@+id/ivImage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -42,22 +89,25 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:hint="@string/qiscus_add_a_caption_mc"
-            android:imeOptions="actionSend"
+            android:background="@drawable/bg_textview"
+            android:hint="Add caption to your image"
             android:inputType="textLongMessage|textAutoCorrect|textCapSentences|textMultiLine"
-            android:maxLines="4"
+            android:maxLines="5"
             android:nextFocusRight="@+id/button_send"
             android:padding="8dp"
             android:textColor="@color/qiscus_black_mc"
+            android:textColorHint="@color/qiscus_hint_mc"
             android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/buttonSend"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
             android:layout_gravity="bottom"
+            android:layout_margin="5dp"
             android:padding="8dp"
             android:src="@drawable/ic_send_mc" />
 

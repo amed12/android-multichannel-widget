@@ -63,7 +63,8 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:clickable="false"
-            android:src="@drawable/ic_qiscus_gallery" />
+            android:src="@drawable/ic_qiscus_gallery"
+            android:tint="@color/colorPrimary" />
 
         <TextView
             android:layout_width="0dp"
@@ -72,8 +73,8 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:gravity="center|start"
-            android:text="@string/qiscus_image_mc"
-            android:textColor="@color/qiscus_text_attachment_mc" />
+            android:text="@string/qiscus_gallery_mc"
+            android:textColor="@color/colorPrimary" />
 
     </LinearLayout>
 
@@ -90,13 +91,15 @@
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:orientation="horizontal"
-        android:padding="10dp">
+        android:padding="10dp"
+        tools:ignore="UnusedAttribute">
 
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:clickable="false"
-            android:src="@drawable/ic_qiscus_doc" />
+            android:src="@drawable/ic_qiscus_doc"
+            android:tint="@color/colorPrimary" />
 
         <TextView
             android:layout_width="0dp"
@@ -106,7 +109,7 @@
             android:layout_weight="1"
             android:gravity="center|start"
             android:text="@string/qiscus_document_mc"
-            android:textColor="@color/qiscus_text_attachment_mc" />
+            android:textColor="@color/colorPrimary" />
 
     </LinearLayout>
 

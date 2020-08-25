@@ -6,16 +6,19 @@
     android:layout_height="wrap_content"
     android:background="@color/qiscus_white_mc"
     android:orientation="vertical"
-    android:padding="10dp"
-    android:visibility="visible">
+    android:paddingStart="8dp"
+    android:paddingLeft="8dp"
+    android:paddingBottom="4dp"
+    android:visibility="visible"
+    tools:ignore="RtlSymmetry">
 
     <View
         android:id="@+id/view"
         android:layout_width="0dp"
         android:layout_height="66dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="121dp"
         android:layout_marginRight="121dp"
         android:background="@drawable/qiscus_rounded_left_chat_bg_mc"
@@ -25,16 +28,13 @@
         app:layout_constraintStart_toEndOf="@+id/avatar_driver"
         app:layout_constraintTop_toBottomOf="@+id/sender" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar_driver"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/message"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvTitle" />
+        app:layout_constraintTop_toTopOf="@+id/view" />
 
     <ImageView
         android:id="@+id/ivAttachment"
@@ -60,40 +60,64 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:padding="4dp"
         android:src="@drawable/ic_qiscus_opponent_download_file"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="@+id/view" />
 
-    <TextView
-        android:id="@+id/dateOfMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_date"
+    <LinearLayout
+        android:id="@+id/view6"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:gravity="center"
-        android:padding="10dp"
-        android:text="Date"
-        android:textSize="14sp"
-        android:visibility="visible"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvFirstIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:padding="10dp"
+            android:text="You've reached first page"
+            android:textColor="@color/qiscus_system_event"
+            android:textSize="12sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/dateOfMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:background="@drawable/rounded_date"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Date"
+            android:textColor="@color/qiscus_left_bubble_text_mc"
+            android:textSize="12sp"
+            android:visibility="visible" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/sender"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="4dp"
+        android:paddingBottom="6dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="@color/qiscus_secondary_text_mc"
-        android:textSize="14sp"
+        android:textColor="@color/qiscus_customer_text_mc"
+        android:textSize="12sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateOfMessage" />
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toBottomOf="@+id/view6" />
 
     <TextView
         android:id="@+id/tvTitle"
@@ -110,7 +134,6 @@
         android:ellipsize="end"
         android:maxEms="20"
         android:maxLines="1"
-        android:textAllCaps="true"
         android:textColor="@color/qiscus_left_bubble_text_mc"
         android:textSize="14sp"
         android:visibility="visible"
@@ -118,7 +141,7 @@
         app:layout_constraintStart_toEndOf="@+id/ivAttachment"
         app:layout_constraintTop_toTopOf="@+id/view" />
 
-    <com.qiscus.qiscusmultichannel.ui.view.QiscusCircleProgress
+    <com.qiscus.qiscuschat.ui.view.QiscusCircleProgress
         android:id="@+id/qcpProgressView"
         android:layout_width="32dp"
         android:layout_height="32dp"
@@ -145,14 +168,13 @@
         android:layout_marginBottom="8dp"
         android:layout_toRightOf="@id/ivAttachment"
         android:autoLink="all"
-        android:linksClickable="true"
-        android:textColor="@color/qiscus_left_bubble_text_mc"
-        android:textColorLink="@color/qiscus_color_opponent_link_mc"
-        android:textSize="14sp"
         android:ellipsize="end"
+        android:linksClickable="true"
         android:maxEms="20"
         android:maxLines="1"
-        android:textAllCaps="true"
+        android:textColor="@color/qiscus_left_bubble_text_mc"
+        android:textColorLink="@color/qiscus_color_opponent_link_mc"
+        android:textSize="12sp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toStartOf="@+id/ivDownloadIcon"

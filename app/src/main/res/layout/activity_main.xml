@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:gravity="center"
+    tools:context="com.qiscus.chat.sample.MainActivity">
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="6dp"
+        android:text="Login Multichannel"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnOpen"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/btnLogin"
+        android:layout_centerInParent="true"
+        android:layout_margin="6dp"
         android:text="open Multichannel"
-        android:layout_centerInParent="true"/>
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnOpen"
+        android:layout_centerInParent="true"
+        android:layout_margin="6dp"
+        android:text="Logout Multichannel"
+        android:textAllCaps="false" />
 
 </RelativeLayout>
