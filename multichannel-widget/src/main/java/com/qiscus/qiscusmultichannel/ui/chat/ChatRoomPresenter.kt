@@ -483,6 +483,11 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
 
         }
         if (qiscusComment.type == QiscusComment.Type.SYSTEM_EVENT) {
+
+            if (qiscusComment.message.contains("as resolved")) {
+                view?.showNewChatButton(true)
+            }
+
             QiscusApi.getInstance().getChatRoomInfo(room.id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
