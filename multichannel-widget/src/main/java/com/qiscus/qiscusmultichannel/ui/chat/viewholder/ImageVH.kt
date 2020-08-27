@@ -52,30 +52,20 @@ class ImageVH(itemView: View, var listener: CommentsAdapter.RecyclerViewItemClic
     override fun bind(comment: QiscusComment) {
         super.bind(comment)
 
-        try {
-            val content = JSONObject(comment.extraPayload)
-            val url = content.getString("url")
-            val caption = content.getString("caption")
-            val filename = content.getString("file_name")
-
+        if (comment.rawType == "text") {
+            val url = comment.attachmentUri.toString()
+            message.visibility = View.GONE
             if (url.startsWith("http")) { //We have sent it
                 showSentImage(comment, url)
             } else { //Still uploading the image
                 showSendingImage(url)
             }
 
-            if (caption.isEmpty()) {
-                message.visibility = View.GONE
-            } else {
-                message.visibility = View.VISIBLE
-                message.text = caption
-            }
-
             val chatRoom = QiscusCore.getDataStore().getChatRoom(comment.roomId)
             sender?.visibility = if (chatRoom.isGroup) View.VISIBLE else View.GONE
             dateOfMessage?.text = DateUtil.toFullDate(comment.time)
             thumbnail.setOnClickListener {
-                dialodViewImage(url, comment.sender, caption, comment.time)
+                dialodViewImage(url, comment.sender, "", comment.time)
             }
 
             thumbnail.setOnLongClickListener {
@@ -84,9 +74,46 @@ class ImageVH(itemView: View, var listener: CommentsAdapter.RecyclerViewItemClic
             }
 
             setUpLinks()
-        } catch (t: Throwable) {
 
+        } else {
+            try {
+                val content = JSONObject(comment.extraPayload)
+                val url = content.getString("url")
+                val caption = content.getString("caption")
+                val filename = content.getString("file_name")
+
+                if (url.startsWith("http")) { //We have sent it
+                    showSentImage(comment, url)
+                } else { //Still uploading the image
+                    showSendingImage(url)
+                }
+
+                if (caption.isEmpty()) {
+                    message.visibility = View.GONE
+                } else {
+                    message.visibility = View.VISIBLE
+                    message.text = caption
+                }
+
+                val chatRoom = QiscusCore.getDataStore().getChatRoom(comment.roomId)
+                sender?.visibility = if (chatRoom.isGroup) View.VISIBLE else View.GONE
+                dateOfMessage?.text = DateUtil.toFullDate(comment.time)
+                thumbnail.setOnClickListener {
+                    dialodViewImage(url, comment.sender, caption, comment.time)
+                }
+
+                thumbnail.setOnLongClickListener {
+                    listener?.onItemLongClick(itemView, adapterPosition)
+                    true
+                }
+
+                setUpLinks()
+            } catch (t: Throwable) {
+
+            }
         }
+
+
 
     }
 

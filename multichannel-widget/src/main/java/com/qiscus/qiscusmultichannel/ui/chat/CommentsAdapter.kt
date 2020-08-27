@@ -43,7 +43,13 @@ class CommentsAdapter(val context: Context) :
     override fun getItemViewType(position: Int): Int {
         val comment = data.get(position)
         when (comment.type) {
-            QiscusComment.Type.TEXT -> return if (comment.isMyComment) TYPE_MY_TEXT else TYPE_OPPONENT_TEXT
+            QiscusComment.Type.TEXT -> {
+                if (comment.isAttachment() == true) {
+                    return if (comment.isMyComment) TYPE_MY_IMAGE else TYPE_OPPONENT_IMAGE
+                } else {
+                    return if (comment.isMyComment) TYPE_MY_TEXT else TYPE_OPPONENT_TEXT
+                }
+            }
 
             QiscusComment.Type.REPLY -> {
                 return if (comment.isMyComment) TYPE_MY_REPLY else TYPE_OPPONENT_REPLY
