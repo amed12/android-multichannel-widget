@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.view
+package com.qiscus.qiscusmultichannel.ui.view
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView

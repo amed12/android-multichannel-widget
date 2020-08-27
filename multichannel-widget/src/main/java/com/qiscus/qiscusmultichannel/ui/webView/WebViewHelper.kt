@@ -1,11 +1,11 @@
-package com.qiscus.qiscuschat.ui.webView
+package com.qiscus.qiscusmultichannel.ui.webView
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
-import com.qiscus.integrations.multichannel_sample.R
+import com.qiscus.qiscusmultichannel.R
 
 /**
  * Created on : 14/02/20

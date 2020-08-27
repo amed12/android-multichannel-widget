@@ -1,13 +1,13 @@
-package com.qiscus.qiscuschat.ui.chat.viewholder
+package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.view.View
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
-import com.qiscus.integrations.multichannel_sample.R
-import com.qiscus.qiscuschat.MultichannelWidget
-import com.qiscus.qiscuschat.ui.view.ButtonView
+import com.qiscus.qiscusmultichannel.MultichannelWidget
+import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.ui.view.ButtonView
 import com.qiscus.sdk.chat.core.QiscusCore
 import com.qiscus.sdk.chat.core.data.model.QiscusComment
 import kotlinx.android.synthetic.main.item_button_mc.view.*

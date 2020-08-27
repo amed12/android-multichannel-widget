@@ -2,8 +2,8 @@ package com.qiscus.chat.sample
 
 import androidx.multidex.MultiDexApplication
 import com.qiscus.chat.sample.utils.NotificationListener
-import com.qiscus.qiscuschat.MultichannelWidget
-import com.qiscus.qiscuschat.MultichannelWidgetConfig
+import com.qiscus.qiscusmultichannel.MultichannelWidget
+import com.qiscus.qiscusmultichannel.MultichannelWidgetConfig
 
 /**
  * Created on : 2020-02-28

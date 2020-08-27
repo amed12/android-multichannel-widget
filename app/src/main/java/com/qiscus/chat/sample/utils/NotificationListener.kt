@@ -1,8 +1,8 @@
 package com.qiscus.chat.sample.utils
 
 import android.content.Context
-import com.qiscus.qiscuschat.util.MultichannelNotificationListener
-import com.qiscus.qiscuschat.util.PNUtil
+import com.qiscus.qiscusmultichannel.util.MultichannelNotificationListener
+import com.qiscus.qiscusmultichannel.util.PNUtil
 import com.qiscus.sdk.chat.core.data.model.QiscusComment
 
 class NotificationListener : MultichannelNotificationListener {

@@ -141,7 +141,7 @@
         app:layout_constraintStart_toEndOf="@+id/ivAttachment"
         app:layout_constraintTop_toTopOf="@+id/view" />
 
-    <com.qiscus.qiscuschat.ui.view.QiscusCircleProgress
+    <com.qiscus.qiscusmultichannel.ui.view.QiscusCircleProgress
         android:id="@+id/qcpProgressView"
         android:layout_width="32dp"
         android:layout_height="32dp"

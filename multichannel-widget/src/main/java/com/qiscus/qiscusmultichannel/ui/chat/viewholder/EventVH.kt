@@ -1,8 +1,8 @@
-package com.qiscus.qiscuschat.ui.chat.viewholder
+package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
 import android.view.View
 import android.widget.TextView
-import com.qiscus.integrations.multichannel_sample.R
+import com.qiscus.qiscusmultichannel.R
 import com.qiscus.sdk.chat.core.data.model.QiscusComment
 
 class EventVH(itemView: View) : BaseViewHolder(itemView) {

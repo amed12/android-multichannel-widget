@@ -1,13 +1,13 @@
-package com.qiscus.qiscuschat.data.repository.impl
+package com.qiscus.qiscusmultichannel.data.repository.impl
 
-import com.qiscus.qiscuschat.MultichannelWidget
-import com.qiscus.qiscuschat.MultichannelWidgetConfig
-import com.qiscus.qiscuschat.data.model.DataInitialChat
-import com.qiscus.qiscuschat.data.model.UserProperties
-import com.qiscus.qiscuschat.data.model.widgetChatConfig.ChatConfig
-import com.qiscus.qiscuschat.data.repository.ChatroomRepository
-import com.qiscus.qiscuschat.data.repository.response.ResponseInitiateChat
-import com.qiscus.qiscuschat.util.QiscusChatLocal
+import com.qiscus.qiscusmultichannel.MultichannelWidget
+import com.qiscus.qiscusmultichannel.MultichannelWidgetConfig
+import com.qiscus.qiscusmultichannel.data.model.DataInitialChat
+import com.qiscus.qiscusmultichannel.data.model.UserProperties
+import com.qiscus.qiscusmultichannel.data.model.widgetChatConfig.ChatConfig
+import com.qiscus.qiscusmultichannel.data.repository.ChatroomRepository
+import com.qiscus.qiscusmultichannel.data.repository.response.ResponseInitiateChat
+import com.qiscus.qiscusmultichannel.util.QiscusChatLocal
 import com.qiscus.sdk.chat.core.QiscusCore
 import com.qiscus.sdk.chat.core.data.model.QiscusComment
 import com.qiscus.sdk.chat.core.data.remote.QiscusApi

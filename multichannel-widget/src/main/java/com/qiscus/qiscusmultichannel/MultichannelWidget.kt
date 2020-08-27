@@ -1,17 +1,17 @@
-package com.qiscus.qiscuschat
+package com.qiscus.qiscusmultichannel
 
 import android.app.Application
 import android.content.Context
 import com.google.firebase.messaging.RemoteMessage
 import com.qiscus.jupuk.Jupuk
 import com.qiscus.nirmana.Nirmana
-import com.qiscus.qiscuschat.data.model.UserProperties
-import com.qiscus.qiscuschat.ui.chat.ChatRoomActivity
-import com.qiscus.qiscuschat.ui.loading.LoadingActivity
-import com.qiscus.qiscuschat.ui.login.LoginActivity
-import com.qiscus.qiscuschat.util.PNUtil
-import com.qiscus.qiscuschat.util.QiscusChatLocal
-import com.qiscus.qiscuschat.util.showToast
+import com.qiscus.qiscusmultichannel.data.model.UserProperties
+import com.qiscus.qiscusmultichannel.ui.chat.ChatRoomActivity
+import com.qiscus.qiscusmultichannel.ui.loading.LoadingActivity
+import com.qiscus.qiscusmultichannel.ui.login.LoginActivity
+import com.qiscus.qiscusmultichannel.util.PNUtil
+import com.qiscus.qiscusmultichannel.util.QiscusChatLocal
+import com.qiscus.qiscusmultichannel.util.showToast
 import com.qiscus.sdk.chat.core.QiscusCore
 import com.qiscus.sdk.chat.core.data.model.QiscusAccount
 import com.qiscus.sdk.chat.core.data.model.QiscusChatRoom

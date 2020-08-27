@@ -1,13 +1,13 @@
-package com.qiscus.qiscuschat.ui.chat
+package com.qiscus.qiscusmultichannel.ui.chat
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import androidx.recyclerview.widget.RecyclerView
-import com.qiscus.integrations.multichannel_sample.R
-import com.qiscus.qiscuschat.ui.chat.viewholder.BaseViewHolder
-import com.qiscus.qiscuschat.ui.chat.viewholder.CardVH
+import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.ui.chat.viewholder.BaseViewHolder
+import com.qiscus.qiscusmultichannel.ui.chat.viewholder.CardVH
 import com.qiscus.sdk.chat.core.data.model.QiscusComment
 import kotlinx.android.synthetic.main.item_card_mc.view.*
 import org.json.JSONArray

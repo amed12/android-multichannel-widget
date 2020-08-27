@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.chat.image;
+package com.qiscus.qiscusmultichannel.ui.chat.image;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;

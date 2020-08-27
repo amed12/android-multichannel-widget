@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.chat
+package com.qiscus.qiscusmultichannel.ui.chat
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

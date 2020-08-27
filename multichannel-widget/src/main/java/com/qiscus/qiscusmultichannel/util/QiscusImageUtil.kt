@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.util
+package com.qiscus.qiscusmultichannel.util
 
 import android.graphics.*
 import android.media.ExifInterface

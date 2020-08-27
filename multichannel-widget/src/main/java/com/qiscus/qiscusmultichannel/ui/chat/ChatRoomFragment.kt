@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.chat
+package com.qiscus.qiscusmultichannel.ui.chat
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -23,16 +23,16 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.qiscus.integrations.multichannel_sample.R
 import com.qiscus.jupuk.JupukBuilder
 import com.qiscus.jupuk.JupukConst
 import com.qiscus.nirmana.Nirmana
-import com.qiscus.qiscuschat.MultichannelWidget
-import com.qiscus.qiscuschat.ui.chat.image.SendImageConfirmationActivity
-import com.qiscus.qiscuschat.ui.loading.LoadingActivity
-import com.qiscus.qiscuschat.ui.view.QiscusChatScrollListener
-import com.qiscus.qiscuschat.ui.webView.WebViewHelper
-import com.qiscus.qiscuschat.util.*
+import com.qiscus.qiscusmultichannel.MultichannelWidget
+import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.ui.chat.image.SendImageConfirmationActivity
+import com.qiscus.qiscusmultichannel.ui.loading.LoadingActivity
+import com.qiscus.qiscusmultichannel.ui.view.QiscusChatScrollListener
+import com.qiscus.qiscusmultichannel.ui.webView.WebViewHelper
+import com.qiscus.qiscusmultichannel.util.*
 import com.qiscus.sdk.chat.core.QiscusCore
 import com.qiscus.sdk.chat.core.data.local.QiscusCacheManager
 import com.qiscus.sdk.chat.core.data.model.QiscusChatRoom

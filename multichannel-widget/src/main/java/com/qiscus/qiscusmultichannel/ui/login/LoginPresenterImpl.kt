@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.login
+package com.qiscus.qiscusmultichannel.ui.login
 
 class LoginPresenterImpl(val listener: LoginListener) {
 

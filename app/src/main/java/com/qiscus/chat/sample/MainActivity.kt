@@ -2,7 +2,7 @@ package com.qiscus.chat.sample
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.qiscus.qiscuschat.MultichannelWidget
+import com.qiscus.qiscusmultichannel.MultichannelWidget
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {

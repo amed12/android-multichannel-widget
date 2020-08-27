@@ -1,13 +1,13 @@
 @file:Suppress("DUPLICATE_LABEL_IN_WHEN")
 
-package com.qiscus.qiscuschat.ui.chat
+package com.qiscus.qiscusmultichannel.ui.chat
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.qiscus.integrations.multichannel_sample.R
-import com.qiscus.qiscuschat.ui.chat.viewholder.*
+import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.ui.chat.viewholder.*
 import com.qiscus.sdk.chat.core.data.model.QiscusComment
 import com.qiscus.sdk.chat.core.util.QiscusAndroidUtil
 import com.qiscus.sdk.chat.core.util.QiscusDateUtil

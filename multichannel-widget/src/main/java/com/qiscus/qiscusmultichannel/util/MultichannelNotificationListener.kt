@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.util
+package com.qiscus.qiscusmultichannel.util
 
 import android.content.Context
 import com.qiscus.sdk.chat.core.data.model.QiscusComment

@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.chat.viewholder
+package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
-import com.qiscus.integrations.multichannel_sample.R
+import com.qiscus.qiscusmultichannel.R
 import com.qiscus.sdk.chat.core.QiscusCore
 import com.qiscus.sdk.chat.core.data.model.QiscusComment
 import java.io.File

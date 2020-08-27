@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.util
+package com.qiscus.qiscusmultichannel.util
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat

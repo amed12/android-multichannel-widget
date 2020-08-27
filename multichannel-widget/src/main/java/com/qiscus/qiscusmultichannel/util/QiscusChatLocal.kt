@@ -1,10 +1,10 @@
-package com.qiscus.qiscuschat.util
+package com.qiscus.qiscusmultichannel.util
 
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.qiscus.qiscuschat.MultichannelWidget
-import com.qiscus.qiscuschat.data.model.UserProperties
+import com.qiscus.qiscusmultichannel.MultichannelWidget
+import com.qiscus.qiscusmultichannel.data.model.UserProperties
 import org.json.JSONObject
 
 /**

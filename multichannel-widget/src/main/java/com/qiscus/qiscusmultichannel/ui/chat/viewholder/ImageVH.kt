@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.chat.viewholder
+package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -21,12 +21,12 @@ import androidx.core.util.PatternsCompat
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import com.qiscus.integrations.multichannel_sample.R
 import com.qiscus.nirmana.Nirmana
-import com.qiscus.qiscuschat.ui.webView.WebViewHelper
-import com.qiscus.qiscuschat.util.DateUtil
-import com.qiscus.qiscuschat.util.QiscusImageUtil
-import com.qiscus.qiscuschat.util.showToast
+import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.ui.webView.WebViewHelper
+import com.qiscus.qiscusmultichannel.util.DateUtil
+import com.qiscus.qiscusmultichannel.util.QiscusImageUtil
+import com.qiscus.qiscusmultichannel.util.showToast
 import com.qiscus.sdk.chat.core.QiscusCore
 import com.qiscus.sdk.chat.core.data.model.QiscusComment
 import com.qiscus.sdk.chat.core.data.remote.QiscusApi

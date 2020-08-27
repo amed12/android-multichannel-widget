@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.webView
+package com.qiscus.qiscusmultichannel.ui.webView
 
 import android.content.Intent
 import android.net.Uri
@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import com.qiscus.integrations.multichannel_sample.R
+import com.qiscus.qiscusmultichannel.R
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_web_view_mc.*
 import java.util.regex.Matcher

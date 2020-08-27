@@ -1,13 +1,13 @@
-package com.qiscus.qiscuschat.ui.login
+package com.qiscus.qiscusmultichannel.ui.login
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.qiscus.integrations.multichannel_sample.R
-import com.qiscus.qiscuschat.MultichannelWidget
-import com.qiscus.qiscuschat.util.showToast
+import com.qiscus.qiscusmultichannel.MultichannelWidget
+import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.util.showToast
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity(), LoginPresenterImpl.LoginListener {

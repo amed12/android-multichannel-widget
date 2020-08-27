@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat
+package com.qiscus.qiscusmultichannel
 
 /**
  * Created on : 05/08/19

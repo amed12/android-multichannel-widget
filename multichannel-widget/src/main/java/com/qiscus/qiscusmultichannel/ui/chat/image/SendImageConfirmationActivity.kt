@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.chat.image
+package com.qiscus.qiscusmultichannel.ui.chat.image
 
 import android.app.Activity
 import android.content.Context
@@ -7,8 +7,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.qiscus.integrations.multichannel_sample.R
 import com.qiscus.nirmana.Nirmana
+import com.qiscus.qiscusmultichannel.R
 import com.qiscus.sdk.chat.core.data.model.QiscusChatRoom
 import com.qiscus.sdk.chat.core.data.model.QiscusPhoto
 import kotlinx.android.synthetic.main.activity_send_image_confirmation_mc.*

@@ -1,7 +1,7 @@
-package com.qiscus.qiscuschat.util
+package com.qiscus.qiscusmultichannel.util
 
-import com.qiscus.integrations.multichannel_sample.R
-import com.qiscus.qiscuschat.MultichannelWidget
+import com.qiscus.qiscusmultichannel.MultichannelWidget
+import com.qiscus.qiscusmultichannel.R
 import com.qiscus.sdk.chat.core.data.model.QiscusAccount
 import org.json.JSONObject
 

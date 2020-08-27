@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.chat.viewholder
+package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -9,9 +9,9 @@ import androidx.annotation.Nullable
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
-import com.qiscus.integrations.multichannel_sample.R
 import com.qiscus.nirmana.Nirmana
-import com.qiscus.qiscuschat.util.DateUtil
+import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.util.DateUtil
 import com.qiscus.sdk.chat.core.data.model.QiscusComment
 
 /**

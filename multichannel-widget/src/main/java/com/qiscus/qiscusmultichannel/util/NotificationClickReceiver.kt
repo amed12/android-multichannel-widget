@@ -1,10 +1,10 @@
-package com.qiscus.qiscuschat.util
+package com.qiscus.qiscusmultichannel.util
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.qiscus.qiscuschat.MultichannelWidget
-import com.qiscus.qiscuschat.ui.chat.ChatRoomActivity
+import com.qiscus.qiscusmultichannel.MultichannelWidget
+import com.qiscus.qiscusmultichannel.ui.chat.ChatRoomActivity
 import com.qiscus.sdk.chat.core.data.model.QiscusChatRoom
 import com.qiscus.sdk.chat.core.data.model.QiscusComment
 

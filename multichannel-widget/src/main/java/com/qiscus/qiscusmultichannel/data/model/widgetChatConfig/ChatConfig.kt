@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.data.model.widgetChatConfig
+package com.qiscus.qiscusmultichannel.data.model.widgetChatConfig
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

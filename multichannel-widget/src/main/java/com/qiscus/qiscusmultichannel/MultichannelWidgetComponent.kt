@@ -1,8 +1,8 @@
-package com.qiscus.qiscuschat
+package com.qiscus.qiscusmultichannel
 
-import com.qiscus.qiscuschat.data.repository.QiscusChatApi
-import com.qiscus.qiscuschat.data.repository.QiscusChatRepository
-import com.qiscus.qiscuschat.data.repository.impl.ChatroomRepositoryImpl
+import com.qiscus.qiscusmultichannel.data.repository.QiscusChatApi
+import com.qiscus.qiscusmultichannel.data.repository.QiscusChatRepository
+import com.qiscus.qiscusmultichannel.data.repository.impl.ChatroomRepositoryImpl
 
 /**
  * Created on : 05/08/19

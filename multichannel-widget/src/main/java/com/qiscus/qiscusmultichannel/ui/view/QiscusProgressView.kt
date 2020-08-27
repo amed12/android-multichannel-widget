@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.view
+package com.qiscus.qiscusmultichannel.ui.view
 
 import android.view.View.*
 import androidx.annotation.IntDef

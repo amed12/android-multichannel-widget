@@ -1,9 +1,9 @@
-package com.qiscus.qiscuschat.data.repository
+package com.qiscus.qiscusmultichannel.data.repository
 
 import com.google.gson.JsonObject
-import com.qiscus.qiscuschat.MultichannelWidget
-import com.qiscus.qiscuschat.data.model.DataInitialChat
-import com.qiscus.qiscuschat.data.repository.response.ResponseInitiateChat
+import com.qiscus.qiscusmultichannel.MultichannelWidget
+import com.qiscus.qiscusmultichannel.data.model.DataInitialChat
+import com.qiscus.qiscusmultichannel.data.repository.response.ResponseInitiateChat
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call

@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.data.repository
+package com.qiscus.qiscusmultichannel.data.repository
 
 /**
  * Created on : 05/08/19

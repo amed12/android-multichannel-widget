@@ -135,7 +135,7 @@
                     android:padding="4dp"
                     android:src="@drawable/ic_qiscus_upload_file_mc" />
 
-                <com.qiscus.qiscuschat.ui.view.QiscusCircleProgress
+                <com.qiscus.qiscusmultichannel.ui.view.QiscusCircleProgress
                     android:id="@+id/qcpProgressView"
                     android:layout_width="32dp"
                     android:layout_height="32dp"

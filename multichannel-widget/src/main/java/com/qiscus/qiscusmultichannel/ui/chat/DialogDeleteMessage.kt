@@ -1,11 +1,11 @@
-package com.qiscus.qiscuschat.ui.chat
+package com.qiscus.qiscusmultichannel.ui.chat
 
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
 import android.view.Window
-import com.qiscus.integrations.multichannel_sample.R
+import com.qiscus.qiscusmultichannel.R
 import kotlinx.android.synthetic.main.dialog_delete_message.*
 
 @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")

@@ -1,8 +1,8 @@
-package com.qiscus.qiscuschat.ui.chat.viewholder
+package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.qiscus.qiscuschat.ui.chat.CarouselAdapter
+import com.qiscus.qiscusmultichannel.ui.chat.CarouselAdapter
 import com.qiscus.sdk.chat.core.data.model.QiscusComment
 import kotlinx.android.synthetic.main.item_carousel_mc.view.*
 import org.json.JSONObject

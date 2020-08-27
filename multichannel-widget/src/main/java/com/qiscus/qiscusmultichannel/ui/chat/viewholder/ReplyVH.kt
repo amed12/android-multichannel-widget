@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.chat.viewholder
+package com.qiscus.qiscusmultichannel.ui.chat.viewholder
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -9,9 +9,9 @@ import android.text.style.ClickableSpan
 import android.view.View
 import androidx.core.util.PatternsCompat
 import com.bumptech.glide.request.RequestOptions
-import com.qiscus.integrations.multichannel_sample.R
 import com.qiscus.nirmana.Nirmana
-import com.qiscus.qiscuschat.ui.webView.WebViewHelper
+import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.ui.webView.WebViewHelper
 import com.qiscus.sdk.chat.core.QiscusCore
 import com.qiscus.sdk.chat.core.data.model.QiscusComment
 import kotlinx.android.synthetic.main.item_my_reply_mc.view.*

@@ -1,6 +1,6 @@
-package com.qiscus.qiscuschat
+package com.qiscus.qiscusmultichannel
 
-import com.qiscus.qiscuschat.util.MultichannelNotificationListener
+import com.qiscus.qiscusmultichannel.util.MultichannelNotificationListener
 
 /**
  * Created on : 05/08/19

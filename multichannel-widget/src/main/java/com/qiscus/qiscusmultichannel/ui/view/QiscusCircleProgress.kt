@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.view
+package com.qiscus.qiscusmultichannel.ui.view
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -12,8 +12,8 @@ import android.text.TextPaint
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View
-import com.qiscus.integrations.multichannel_sample.R
-import com.qiscus.qiscuschat.util.QiscusConverterUtil
+import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.util.QiscusConverterUtil
 
 /**
  * Created on : 2019-09-20

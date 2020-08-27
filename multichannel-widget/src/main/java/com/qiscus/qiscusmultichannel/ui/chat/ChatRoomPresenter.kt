@@ -1,8 +1,8 @@
-package com.qiscus.qiscuschat.ui.chat
+package com.qiscus.qiscusmultichannel.ui.chat
 
 import android.webkit.MimeTypeMap
-import com.qiscus.integrations.multichannel_sample.R
-import com.qiscus.qiscuschat.util.QiscusImageUtil
+import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.util.QiscusImageUtil
 import com.qiscus.sdk.chat.core.QiscusCore
 import com.qiscus.sdk.chat.core.data.local.QiscusCacheManager
 import com.qiscus.sdk.chat.core.data.model.*

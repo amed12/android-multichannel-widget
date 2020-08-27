@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.ui.chat
+package com.qiscus.qiscusmultichannel.ui.chat
 
 import android.content.Context
 import android.content.Intent
@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.request.RequestOptions
-import com.qiscus.integrations.multichannel_sample.R
 import com.qiscus.nirmana.Nirmana
-import com.qiscus.qiscuschat.MultichannelWidget
+import com.qiscus.qiscusmultichannel.MultichannelWidget
+import com.qiscus.qiscusmultichannel.R
 import com.qiscus.sdk.chat.core.QiscusCore
 import com.qiscus.sdk.chat.core.data.model.QiscusChatRoom
 import com.qiscus.sdk.chat.core.data.model.QiscusComment

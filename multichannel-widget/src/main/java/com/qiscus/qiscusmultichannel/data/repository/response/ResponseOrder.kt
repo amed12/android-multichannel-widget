@@ -1,4 +1,4 @@
-package com.qiscus.qiscuschat.data.repository.response
+package com.qiscus.qiscusmultichannel.data.repository.response
 
 
 import com.google.gson.annotations.SerializedName

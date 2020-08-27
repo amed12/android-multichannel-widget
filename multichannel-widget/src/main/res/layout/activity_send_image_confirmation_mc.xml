@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.qiscus.qiscuschat.ui.chat.image.SendImageConfirmationActivity">
+    tools:context="com.qiscus.qiscusmultichannel.ui.chat.image.SendImageConfirmationActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -70,7 +70,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.qiscus.qiscuschat.ui.chat.image.QiscusTouchImageView
+    <com.qiscus.qiscusmultichannel.ui.chat.image.QiscusTouchImageView
         android:id="@+id/ivImage"
         android:layout_width="match_parent"
         android:layout_height="0dp"

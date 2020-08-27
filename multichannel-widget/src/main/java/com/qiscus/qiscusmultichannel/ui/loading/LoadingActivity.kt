@@ -1,13 +1,13 @@
-package com.qiscus.qiscuschat.ui.loading
+package com.qiscus.qiscusmultichannel.ui.loading
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.qiscus.integrations.multichannel_sample.R
-import com.qiscus.qiscuschat.data.model.UserProperties
-import com.qiscus.qiscuschat.ui.chat.ChatRoomActivity
-import com.qiscus.qiscuschat.util.showToast
+import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.data.model.UserProperties
+import com.qiscus.qiscusmultichannel.ui.chat.ChatRoomActivity
+import com.qiscus.qiscusmultichannel.util.showToast
 import com.qiscus.sdk.chat.core.data.model.QiscusChatRoom
 import org.json.JSONObject
 

@@ -1,11 +1,11 @@
-package com.qiscus.qiscuschat.ui.view;
+package com.qiscus.qiscusmultichannel.ui.view;
 
 import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.qiscus.integrations.multichannel_sample.R;
+import com.qiscus.qiscusmultichannel.R;
 
 import org.json.JSONObject;
 

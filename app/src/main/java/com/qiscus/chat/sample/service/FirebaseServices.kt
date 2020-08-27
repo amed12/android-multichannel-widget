@@ -3,7 +3,7 @@ package com.qiscus.chat.sample.service
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.qiscus.qiscuschat.MultichannelWidget
+import com.qiscus.qiscusmultichannel.MultichannelWidget
 
 /**
  * Created on : 26/03/20
