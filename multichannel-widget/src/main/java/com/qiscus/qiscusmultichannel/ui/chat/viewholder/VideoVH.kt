@@ -90,7 +90,7 @@ class VideoVH(itemView: View) : ImageVH(itemView), ImageVH.DownloadFileListener 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         val uri = FileProvider.getUriForFile(
             itemView.context,
-            QiscusCore.getApps().packageName + ".qiscus.sdk.provider",
+            QiscusCore.getApps().packageName,
             file
         )
         intent.setDataAndType(uri, "video/*")

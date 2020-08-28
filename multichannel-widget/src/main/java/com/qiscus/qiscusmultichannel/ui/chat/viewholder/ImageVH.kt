@@ -269,12 +269,12 @@ open class ImageVH(itemView: View) : BaseViewHolder(itemView) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(fileImage))
         } else {
-            QiscusCore.getApps().packageName + ".qiscus.sdk.provider"
+            QiscusCore.getApps().packageName
             intent.putExtra(
                 Intent.EXTRA_STREAM,
                 FileProvider.getUriForFile(
                     itemView.context,
-                    QiscusCore.getApps().packageName + ".qiscus.sdk.provider",
+                    QiscusCore.getApps().packageName,
                     fileImage
                 )
             )

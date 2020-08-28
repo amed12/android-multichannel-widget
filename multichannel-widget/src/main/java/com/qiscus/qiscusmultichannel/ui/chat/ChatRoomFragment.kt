@@ -294,7 +294,7 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
                             MediaStore.EXTRA_OUTPUT,
                             FileProvider.getUriForFile(
                                 ctx,
-                                QiscusCore.getApps().packageName + ".qiscus.sdk.provider",
+                                QiscusCore.getApps().packageName,
                                 photoFile
                             )
                         )
@@ -536,7 +536,7 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
             intent.setDataAndType(
                 FileProvider.getUriForFile(
                     ctx,
-                    QiscusCore.getApps().packageName + ".qiscus.sdk.provider",
+                    QiscusCore.getApps().packageName,
                     file
                 ), mimeType
             )
