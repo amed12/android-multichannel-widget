@@ -157,7 +157,7 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
             notifyServerTyping(true)
         }, {
             when {
-                it.isNotEmpty() -> {
+                it.isNotEmpty() && it.trim() != "" -> {
                     setViewEnabled(btnSend, true)
                     changeImageSendTint(btnSend, R.color.colorPrimary)
                 }
@@ -260,7 +260,8 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
     }
 
     private fun sendingComment() {
-        if (!TextUtils.isEmpty(etMessage.text)) {
+        val message = etMessage.text
+        if (!TextUtils.isEmpty(message) && message.trim() != "") {
             if (rootViewSender.isVisible) {
                 selectedComment?.let {
                     presenter.sendReplyComment(etMessage.text.toString(), it)
