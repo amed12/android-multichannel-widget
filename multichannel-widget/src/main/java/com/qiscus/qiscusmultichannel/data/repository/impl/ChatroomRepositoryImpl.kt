@@ -27,6 +27,11 @@ class ChatroomRepositoryImpl : ChatroomRepository {
         onSuccess: (QiscusComment) -> Unit,
         onError: (Throwable) -> Unit
     ) {
+
+        if (message.type == QiscusComment.Type.TEXT && message.message.trim().isEmpty()) {
+            onError(Throwable("message can't be empty"))
+        }
+
         QiscusApi.getInstance().sendMessage(message)
             .doOnSubscribe { QiscusCore.getDataStore().addOrUpdate(message) }
             .subscribeOn(Schedulers.io())

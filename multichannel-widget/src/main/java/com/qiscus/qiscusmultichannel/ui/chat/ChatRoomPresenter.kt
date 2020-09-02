@@ -57,6 +57,11 @@ class ChatRoomPresenter(var room: QiscusChatRoom) : QiscusChatRoomEventHandler.S
     }
 
     private fun sendComment(message: QiscusComment) {
+
+        if (message.type == QiscusComment.Type.TEXT && message.message.trim().isEmpty()) {
+            return
+        }
+
 //        view.onSendingComment(qiscusComment)
         val subscription = QiscusApi.getInstance().sendMessage(message)
             .doOnSubscribe { QiscusCore.getDataStore().addOrUpdate(message) }
