@@ -40,6 +40,10 @@ class ChatroomRepositoryImpl : ChatroomRepository {
         qUser.name = qAccount.name
         message.setSender(qUser)
 
+        if (message.type == QMessage.Type.TEXT && message.text.trim().isEmpty()) {
+            return
+        }
+
         Const.qiscusCore()!!.sendMessage(message, object : OnSendMessageListener {
             override fun onSending(qiscusComment: QMessage) {
                 Const.qiscusCore()!!.dataStore.addOrUpdate(qiscusComment)
