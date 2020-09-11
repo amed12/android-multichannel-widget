@@ -36,7 +36,7 @@ class CardVH(itemView: View) : BaseViewHolder(itemView) {
     override fun bind(context: Context, comment: QMessage) {
         super.bind(context, comment)
         this.context = context
-        val data = comment.payload
+        val data = JSONObject(comment.payload)
         itemView.tv_title.text = data.getString("title")
         itemView.tv_message.text = data.getString("description")
 
@@ -51,7 +51,7 @@ class CardVH(itemView: View) : BaseViewHolder(itemView) {
             .load(data.getString("image"))
             .into(itemView.image)
         try {
-            val obj = comment.payload
+            val obj = JSONObject(comment.payload)
             setUpButtons(obj.getJSONArray("buttons"), comment)
         } catch (e: JSONException) {
             e.printStackTrace()

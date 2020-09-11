@@ -18,6 +18,7 @@ import com.qiscus.qiscusmultichannel.util.Const
 import com.qiscus.qiscusmultichannel.util.QiscusImageUtil
 import com.qiscus.qiscusmultichannel.util.webView.WebViewHelper
 import com.qiscus.sdk.chat.core.data.model.QMessage
+import org.json.JSONObject
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.regex.Matcher
@@ -45,7 +46,7 @@ class FileVH(itemView: View) : BaseViewHolder(itemView), QMessage.ProgressListen
         setUpDownloadIcon(comment)
         setUpLinks()
         try {
-            val content = comment.payload
+            val content = JSONObject(comment.payload)
             val title = content.getString("file_name")
             val url = content.getString("url")
             val tipe = url.split(".")

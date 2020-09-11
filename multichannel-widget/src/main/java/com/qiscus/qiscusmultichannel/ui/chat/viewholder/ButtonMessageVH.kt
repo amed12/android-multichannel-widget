@@ -33,7 +33,7 @@ class ButtonMessageVH(
         super.bind(context, comment)
         this.context = context
         try {
-            val obj = comment.payload
+            val obj = JSONObject(comment.payload)
             setUpButtons(obj.getJSONArray("buttons"), comment)
         } catch (e: JSONException) {
             e.printStackTrace()

@@ -28,6 +28,7 @@ import com.qiscus.qiscusmultichannel.util.webView.WebViewHelper
 import com.qiscus.sdk.chat.core.QiscusCore
 import com.qiscus.sdk.chat.core.data.model.QMessage
 import com.qiscus.sdk.chat.core.util.QiscusDateUtil
+import org.json.JSONObject
 import java.io.File
 import java.util.*
 import java.util.regex.Matcher
@@ -47,7 +48,7 @@ class ImageVH(itemView: View) : BaseViewHolder(itemView) {
         super.bind(context, comment)
 
         try {
-            val content = comment.payload
+            val content = JSONObject(comment.payload)
             val url = content.getString("url")
             val caption = content.getString("caption")
             val filename = content.getString("file_name")
