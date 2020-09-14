@@ -126,7 +126,7 @@ MultichannelWidget.instance.initiateChat(this, ConstCore.qiscusCore2(), "yourNam
 
 first you need setup Firebase Cloud Messaging in your android App. You need register your server key to Qiscus Multichannel. For now, we can help you to add this to multichannel, just create ticket to Qiscus [support](https://support.qiscus.com/hc/en-us/requests/new) and send your server key and app id.
 
-In your app, you need to register FCM token to notify Qiscus Multichannel. For example
+In your app, you need to register FCM token to notify Qiscus Multichannel, and call getCurrentDeviceToken() after initiateChat, and in 1 life circle. For example
 ```
 class FirebaseServices : FirebaseMessagingService() {
 
@@ -135,7 +135,51 @@ class FirebaseServices : FirebaseMessagingService() {
         MultichannelWidget.instance.registerDeviceToken(ConstCore.qiscusCore1(), p0)
         MultichannelWidget.instance.registerDeviceToken(ConstCore.qiscusCore2(), p0)
     }
+
+    fun getCurrentDeviceToken() {
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.e(
+                        "Qiscus", "getCurrentDeviceToken Failed : " +
+                                task.exception
+                    )
+                    return@OnCompleteListener
+                }
+                if (task.result != null) {
+                    val currentToken = task.result!!.token
+                    MultichannelWidget.instance.registerDeviceToken(ConstCore.qiscusCore1(), currentToken)
+                    MultichannelWidget.instance.registerDeviceToken(ConstCore.qiscusCore2(), currentToken)
+                }
+            })
+     }
 }
+```
+
+```
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        //always call when aktif app
+        if (MultichannelWidget.instance.hasSetupUser() == true) {
+            FirebaseServices().getCurrentDeviceToken()
+        }
+
+
+        val userProperties = mapOf("city" to "jogja", "job" to "developer")
+
+        btnOpen.setOnClickListener {
+            MultichannelWidget.instance.initiateChat(this, "user1", "user@test.net","https://vignette.wikia.nocookie.net/fatal-fiction-fanon/images/9/9f/Doraemon.png/revision/latest?cb=20170922055255", null, userProperties)
+
+            // only 1 after initiateChat
+            if (MultichannelWidget.instance.hasSetupUser() == true) {
+                FirebaseServices().getCurrentDeviceToken()
+            }
+        }
+    }
 ```
 
 to handle incoming message from Qiscus Multichannel you can do this
