@@ -60,7 +60,7 @@ class CommentsAdapter(val context: Context) :
             QMessage.Type.CARD -> return TYPE_CARD
             QMessage.Type.CAROUSEL -> return TYPE_CAROUSEL
             QMessage.Type.BUTTONS -> return TYPE_BUTTONS
-
+            QMessage.Type.LINK -> return if (comment.isMyComment(me)) TYPE_MY_TEXT else TYPE_OPPONENT_TEXT
             else -> return TYPE_NOT_SUPPORT
         }
     }
