@@ -25,7 +25,7 @@ Then in your app build.gradle you need add this.
 ```
 dependencies {
     ...
-    implementation ('com.qiscus.integrations:multichannel-widget:0.0.16-v3')
+    implementation ('com.qiscus.integrations:multichannel-widget:0.0.22-v3')
 }
 ```
 

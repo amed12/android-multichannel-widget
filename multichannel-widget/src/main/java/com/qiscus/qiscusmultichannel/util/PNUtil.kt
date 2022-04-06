@@ -6,16 +6,22 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.qiscus.qiscusmultichannel.MultichannelWidget
 import com.qiscus.qiscusmultichannel.R
+import com.qiscus.qiscusmultichannel.ui.chat.ChatRoomActivity
+import com.qiscus.sdk.chat.core.data.model.QChatRoom
 import com.qiscus.sdk.chat.core.data.model.QMessage
 import com.qiscus.sdk.chat.core.util.BuildVersionUtil
 import com.qiscus.sdk.chat.core.util.QiscusAndroidUtil
 import com.qiscus.sdk.chat.core.util.QiscusNumberUtil
 import org.json.JSONObject
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
+import java.util.*
 
 /**
  * Created on : 2019-11-08
@@ -26,17 +32,17 @@ class PNUtil {
 
     companion object {
         fun showPn(context: Context, qiscusComment: QMessage) {
-            if (Const.qiscusCore()?.getDataStore()?.isContains(qiscusComment)!!) {
+            if (Const.qiscusCore()?.dataStore?.isContains(qiscusComment)!!) {
                 return
             }
-            Const.qiscusCore()?.getDataStore()?.addOrUpdate(qiscusComment)
+            Const.qiscusCore()?.dataStore?.addOrUpdate(qiscusComment)
 
-            val lastActivity = Const.qiscusCore()?.cacheManager?.lastChatActivity!!
-            if (lastActivity.first!! && lastActivity.second == qiscusComment.chatRoomId) {
+            val lastActivity = Const.qiscusCore()?.cacheManager?.lastChatActivity
+            if (lastActivity?.first!! && lastActivity.second == qiscusComment.chatRoomId) {
                 return
             }
 
-            if (Const.qiscusCore()?.getQiscusAccount()?.id == qiscusComment.sender.id) {
+            if (Const.qiscusCore()?.qiscusAccount?.id == qiscusComment.sender.id) {
                 return
             }
 
@@ -45,7 +51,7 @@ class PNUtil {
             }
 
             val notificationChannelId =
-                Const.qiscusCore()?.getApps()?.packageName + ".qiscus.sdk.notification.channel"
+                Const.qiscusCore()?.apps?.packageName + ".qiscus.sdk.notification.channel"
             if (BuildVersionUtil.isOreoOrHigher()) {
                 val notificationChannel = NotificationChannel(
                     notificationChannelId,
@@ -57,17 +63,37 @@ class PNUtil {
                 notificationManager.createNotificationChannel(notificationChannel)
             }
 
-            val pendingIntent: PendingIntent
-            val openIntent = Intent(context, NotificationClickReceiver::class.java)
-            openIntent.putExtra("data", qiscusComment)
-            pendingIntent = PendingIntent.getBroadcast(
-                context, QiscusNumberUtil.convertToInt(qiscusComment.chatRoomId),
-                openIntent, PendingIntent.FLAG_CANCEL_CURRENT
+            val room = Const.qiscusCore()?.dataStore?.getChatRoom(qiscusComment.chatRoomId)
+
+            //Handle when room is not set in local comment
+            //Condition when user reinstall app after chat from target
+            if (room == null) {
+                addRoomWithMessage(context, qiscusComment, notificationChannelId)
+            } else {
+                //Update local qiscus comment when get from PN
+                Const.qiscusCore()?.dataStore?.addOrUpdate(qiscusComment)
+                buildNotification(context, qiscusComment, room, notificationChannelId)
+            }
+        }
+
+        private fun buildNotification(
+            context: Context,
+            qiscusComment: QMessage,
+            room: QChatRoom,
+            notificationChannelId: String
+        ) {
+            val openIntent = Intent(context, ChatRoomActivity::class.java).apply {
+                putExtra(ChatRoomActivity.CHATROOM_KEY, room)
+            }
+            val pendingIntent = PendingIntent.getActivity(
+                context,
+                QiscusNumberUtil.convertToInt(qiscusComment.chatRoomId),
+                openIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            val room = Const.qiscusCore()?.getDataStore()?.getChatRoom(qiscusComment.chatRoomId)
             val notificationBuilder = NotificationCompat.Builder(context, notificationChannelId)
-            notificationBuilder.setContentTitle(room?.name)
+            notificationBuilder.setContentTitle(room.name)
                 .setContentIntent(pendingIntent)
                 .setContentText(getContent(context, qiscusComment))
                 .setTicker(getContent(context, qiscusComment))
@@ -89,10 +115,10 @@ class PNUtil {
 
         private fun getContent(context: Context, qiscusComment: QMessage): String {
 
-            val account = Const.qiscusCore()?.getQiscusAccount()!!
+            val account = Const.qiscusCore()?.qiscusAccount!!
             var sender = ""
 
-            var chatRoom = Const.qiscusCore()?.getDataStore()?.getChatRoom(qiscusComment.chatRoomId)
+            val chatRoom = Const.qiscusCore()?.dataStore?.getChatRoom(qiscusComment.chatRoomId)
             if (chatRoom?.type == "group" &&
                 qiscusComment.type != QMessage.Type.CUSTOM &&
                 qiscusComment.type != QMessage.Type.LOCATION
@@ -140,6 +166,33 @@ class PNUtil {
                 return sender + qiscusComment.text
             }
 
+        }
+
+        private fun addRoomWithMessage(
+            context: Context,
+            qComment: QMessage,
+            notificationChannelId: String
+        ) {
+            Const.qiscusCore()?.api
+                ?.getChatRoomWithMessages(qComment.chatRoomId)
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.doOnNext { roomData ->
+                    Const.qiscusCore()?.dataStore?.addOrUpdate(roomData.first)
+                }
+                ?.doOnNext { roomData ->
+                    for (qiscusComment in roomData.second!!) {
+                        Const.qiscusCore()?.dataStore?.addOrUpdate(qiscusComment)
+                    }
+                }?.subscribe({
+                    buildNotification(context, qComment, it.first!!, notificationChannelId)
+                }, {
+                    Toast.makeText(
+                        context,
+                        it.localizedMessage,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                })
         }
     }
 }
