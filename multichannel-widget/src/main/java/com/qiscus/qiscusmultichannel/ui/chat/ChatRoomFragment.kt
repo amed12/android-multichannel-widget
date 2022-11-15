@@ -106,7 +106,6 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
         initRecyclerMessage()
 
         arguments?.let {
-//            qiscusChatRoom = it.getParcelable(CHATROOM_KEY)
             qiscusChatRoom = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 it.getParcelable(CHATROOM_KEY, QChatRoom::class.java)
             } else {
