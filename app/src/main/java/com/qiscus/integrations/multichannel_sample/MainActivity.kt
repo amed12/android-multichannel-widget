@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //always call when aktif app
-        if (MultichannelWidget.instance.hasSetupUser() == true) {
+        if (MultichannelWidget.instance.hasSetupUser()) {
             FirebaseServices().getCurrentDeviceToken()
         }
 
