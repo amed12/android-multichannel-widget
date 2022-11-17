@@ -286,7 +286,7 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
             val intent = Intent(MediaStore.ACTION_PICK_IMAGES)
             startActivityForResult(intent, PHOTO_PICKER_REQUEST_CODE)
         }else{
-            if (QiscusPermissionsUtil.hasPermissions(ctx, FILE_PERMISSION)) {
+            if (QiscusPermissionsUtil.hasPermissions(ctx, FILE_PERMISSION) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 pickImage()
             } else {
                 requestFilePermission()
