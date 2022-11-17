@@ -3,6 +3,7 @@ package com.qiscus.qiscusmultichannel.ui.webView
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.webkit.WebSettings.LOAD_NO_CACHE
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
@@ -33,17 +34,17 @@ class WebViewActivity : AppCompatActivity() {
             tv_title.text = view.title
             tv_url.text = view.url
             if (url.startsWith("intent://") && url.contains("scheme=http")) {
-                var bkpUrl: String? = null
+                val bkpUrl: String?
                 val regexBkp: Pattern = Pattern.compile("intent://(.*?)#")
                 val regexMatcherBkp: Matcher = regexBkp.matcher(url)
-                if (regexMatcherBkp.find()) {
+                return if (regexMatcherBkp.find()) {
                     bkpUrl = regexMatcherBkp.group(1)
                     val myIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$bkpUrl"))
                     startActivity(myIntent)
                     finish()
-                    return true
+                    true
                 } else {
-                    return false
+                    false
                 }
             }
             return false
@@ -59,7 +60,7 @@ class WebViewActivity : AppCompatActivity() {
         url?.let { webview.loadUrl(it) }
 
         with(webview.settings) {
-            setAppCacheEnabled(true)
+            cacheMode = LOAD_NO_CACHE
             javaScriptEnabled = true
             domStorageEnabled = true
             allowContentAccess = true

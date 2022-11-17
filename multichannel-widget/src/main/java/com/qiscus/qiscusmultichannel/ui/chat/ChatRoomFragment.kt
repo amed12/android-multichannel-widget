@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,7 +48,8 @@ import java.io.IOException
  */
 class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
     ChatRoomPresenter.ChatRoomView, QiscusPermissionsUtil.PermissionCallbacks {
-
+    private val REQUEST_PHOTO_PICKER_SINGLE_SELECT = 9496
+    private val PHOTO_PICKER_REQUEST_CODE = 9496
     private val CAMERA_PERMISSION = arrayOf(
         "android.permission.CAMERA"
     )
@@ -104,7 +106,11 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
         initRecyclerMessage()
 
         arguments?.let {
-            qiscusChatRoom = it.getParcelable(CHATROOM_KEY)
+            qiscusChatRoom = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                it.getParcelable(CHATROOM_KEY, QChatRoom::class.java)
+            } else {
+                it.getParcelable(CHATROOM_KEY)
+            }
         }
 
         if (qiscusChatRoom == null) {
@@ -234,35 +240,35 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
         val permission = if (Build.VERSION.SDK_INT <= 28) CAMERA_PERMISSION_28 else CAMERA_PERMISSION
         if (QiscusPermissionsUtil.hasPermissions(ctx, permission)) {
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            if (intent.resolveActivity(ctx.packageManager) != null) {
-                var photoFile: File? = null
-                try {
-                    photoFile = QiscusImageUtil.createImageFile()
-                } catch (ex: IOException) {
-                    if (ex.message != null && !ex.message.isNullOrEmpty()) {
-                        ctx.showToast(ex.message!!)
-                    } else {
-                        ctx.showToast(getString(R.string.qiscus_chat_error_failed_write_mc))
-                    }
-
+            if (intent.resolveActivity(ctx.packageManager) == null && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
+                return
+            }
+            var photoFile: File? = null
+            try {
+                photoFile = QiscusImageUtil.createImageFile()
+            } catch (ex: IOException) {
+                if (ex.message != null && !ex.message.isNullOrEmpty()) {
+                    ctx.showToast(ex.message!!)
+                } else {
+                    ctx.showToast(getString(R.string.qiscus_chat_error_failed_write_mc))
                 }
 
-                if (photoFile != null) {
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile))
-                    } else {
-                        intent.putExtra(
-                            MediaStore.EXTRA_OUTPUT,
-                            FileProvider.getUriForFile(
-                                ctx,
-                                getAuthority(),
-                                photoFile
-                            )
+            }
+
+            if (photoFile != null) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile))
+                } else {
+                    intent.putExtra(
+                        MediaStore.EXTRA_OUTPUT,
+                        FileProvider.getUriForFile(
+                            ctx,
+                            getAuthority(),
+                            photoFile
                         )
-                    }
-                    startActivityForResult(intent, TAKE_PICTURE_REQUEST)
+                    )
                 }
-
+                startActivityForResult(intent, TAKE_PICTURE_REQUEST)
             }
         } else {
             requestCameraPermission()
@@ -276,14 +282,15 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
     }
 
     private fun openGallery() {
-        if (Build.VERSION.SDK_INT <= 28) {
-            if (QiscusPermissionsUtil.hasPermissions(ctx, FILE_PERMISSION)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val intent = Intent(MediaStore.ACTION_PICK_IMAGES)
+            startActivityForResult(intent, PHOTO_PICKER_REQUEST_CODE)
+        }else{
+            if (QiscusPermissionsUtil.hasPermissions(ctx, FILE_PERMISSION) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 pickImage()
             } else {
                 requestFilePermission()
             }
-        } else {
-            pickImage()
         }
     }
 
@@ -567,58 +574,85 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == TAKE_PICTURE_REQUEST && resultCode == Activity.RESULT_OK) {
-            try {
-                val imageFile =
-                    QiscusFileUtil.from(Uri.parse(Const.qiscusCore()?.cacheManager?.lastImagePath))
-                val qiscusPhoto = QiscusPhoto(imageFile)
+        when {
+            requestCode == TAKE_PICTURE_REQUEST && resultCode == Activity.RESULT_OK -> {
+                try {
+                    val imageFile =
+                        QiscusFileUtil.from(Uri.parse(Const.qiscusCore()?.cacheManager?.lastImagePath))
+                    val qiscusPhoto = QiscusPhoto(imageFile)
 
-                val intent =
-                    SendImageConfirmationActivity.generateIntent(ctx, qiscusChatRoom!!, qiscusPhoto)
-                startActivityForResult(intent, SEND_PICTURE_CONFIRMATION_REQUEST)
+                    val intent =
+                        SendImageConfirmationActivity.generateIntent(ctx, qiscusChatRoom!!, qiscusPhoto)
+                    startActivityForResult(intent, SEND_PICTURE_CONFIRMATION_REQUEST)
 
-            } catch (e: Exception) {
-                ctx.showToast(getString(R.string.qiscus_chat_error_failed_read_picture_mc))
-                e.printStackTrace()
-            }
+                } catch (e: Exception) {
+                    ctx.showToast(getString(R.string.qiscus_chat_error_failed_read_picture_mc))
+                    e.printStackTrace()
+                }
 
-        } else if (requestCode == SEND_PICTURE_CONFIRMATION_REQUEST && resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                showError(getString(R.string.qiscus_chat_error_failed_open_picture_mc))
-                return
             }
+            requestCode == SEND_PICTURE_CONFIRMATION_REQUEST && resultCode == Activity.RESULT_OK -> {
+                if (data == null) {
+                    showError(getString(R.string.qiscus_chat_error_failed_open_picture_mc))
+                    return
+                }
 
-            val caption = data.getStringExtra(SendImageConfirmationActivity.EXTRA_CAPTIONS)
-            val qiscusPhoto =
-                data.getParcelableExtra<QiscusPhoto>(SendImageConfirmationActivity.EXTRA_PHOTOS)
-            if (qiscusPhoto != null) {
-                presenter.sendFile(qiscusPhoto.photoFile, caption)
-            } else {
-                showError(getString(R.string.qiscus_chat_error_failed_read_picture_mc))
+                val caption = data.getStringExtra(SendImageConfirmationActivity.EXTRA_CAPTIONS)
+                val qiscusPhoto = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    data.getParcelableExtra(SendImageConfirmationActivity.EXTRA_PHOTOS, QiscusPhoto::class.java)
+                } else {
+                    data.getParcelableExtra<QiscusPhoto>(SendImageConfirmationActivity.EXTRA_PHOTOS)
+                }
+                if (qiscusPhoto != null) {
+                    presenter.sendFile(qiscusPhoto.photoFile, caption)
+                } else {
+                    showError(getString(R.string.qiscus_chat_error_failed_read_picture_mc))
+                }
             }
-        } else if (requestCode == GET_TEMPLATE && resultCode == Activity.RESULT_OK) {
-            data?.let {
-                val template = it.getStringExtra("template")
-                sendComment(template)
+            requestCode == GET_TEMPLATE && resultCode == Activity.RESULT_OK -> {
+                data?.let {
+                    val template = it.getStringExtra("template")
+                    sendComment(template)
+                }
             }
-        } else if (requestCode == IMAGE_GALLERY_REQUEST && resultCode == Activity.RESULT_OK) {
-            try {
-                val imageFile = QiscusFileUtil.from(data?.data!!)
-                val qiscusPhoto = QiscusPhoto(imageFile)
-                startActivityForResult(
-                    SendImageConfirmationActivity.generateIntent(
-                        ctx,
-                        qiscusChatRoom!!, qiscusPhoto
-                    ),
-                    SEND_PICTURE_CONFIRMATION_REQUEST
-                )
-            } catch (e: Exception) {
-                showError("Failed to open image file!")
+            requestCode == IMAGE_GALLERY_REQUEST && resultCode == Activity.RESULT_OK -> {
+                try {
+                    val imageFile = QiscusFileUtil.from(data?.data!!)
+                    val qiscusPhoto = QiscusPhoto(imageFile)
+                    startActivityForResult(
+                        SendImageConfirmationActivity.generateIntent(
+                            ctx,
+                            qiscusChatRoom!!, qiscusPhoto
+                        ),
+                        SEND_PICTURE_CONFIRMATION_REQUEST
+                    )
+                } catch (e: Exception) {
+                    showError("Failed to open image file!")
+                }
             }
-        } else if (requestCode == JupukConst.REQUEST_CODE_DOC) {
-            val paths = data?.getStringArrayListExtra(JupukConst.KEY_SELECTED_DOCS)
-            if (paths != null && paths.isNotEmpty()) {
-                presenter.sendFile(File(paths[0]))
+            requestCode == JupukConst.REQUEST_CODE_DOC -> {
+                val paths = data?.getStringArrayListExtra(JupukConst.KEY_SELECTED_DOCS)
+                if (paths != null && paths.isNotEmpty()) {
+                    presenter.sendFile(File(paths[0]))
+                }
+            }
+            requestCode == REQUEST_PHOTO_PICKER_SINGLE_SELECT -> {
+                try {
+                    val imageFile = QiscusFileUtil.from(data?.data!!)
+                    val qiscusPhoto = QiscusPhoto(imageFile)
+                    startActivityForResult(
+                        SendImageConfirmationActivity.generateIntent(
+                            ctx,
+                            qiscusChatRoom!!, qiscusPhoto
+                        ),
+                        SEND_PICTURE_CONFIRMATION_REQUEST
+                    )
+                } catch (e: Exception) {
+                    showError("Failed to open image file!")
+                }
+            }
+            else -> {
+                Log.d("requestCode",requestCode.toString())
             }
         }
 
