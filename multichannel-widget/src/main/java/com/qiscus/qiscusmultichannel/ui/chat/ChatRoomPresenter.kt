@@ -233,8 +233,8 @@ class ChatRoomPresenter(var room: QChatRoom) : QiscusChatRoomEventHandler.StateL
         sendFile(file, null)
     }
 
-    fun sendFile(file: File, caption: String?, isCompressed: Boolean = false) {
-        if (!isCompressed) {
+    fun sendFile(file: File, caption: String?) {
+        if (!QiscusFileUtil.isImage(file.path)) {
             QiscusFileUtil.saveFile(file)
         }
 
