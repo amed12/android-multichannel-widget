@@ -36,6 +36,7 @@ import com.qiscus.sdk.chat.core.data.model.QChatRoom
 import com.qiscus.sdk.chat.core.data.model.QMessage
 import com.qiscus.sdk.chat.core.data.model.QiscusPhoto
 import com.qiscus.sdk.chat.core.util.QiscusFileUtil
+import com.qiscus.sdk.chat.core.util.QiscusTextUtil
 import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_chat_room_mc.*
@@ -609,10 +610,21 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
                 }
                 if (qiscusPhoto != null) {
                     if (QiscusFileUtil.isImage(qiscusPhoto.photoFile.path) && !qiscusPhoto.photoFile.name.endsWith(".gif")) {
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            activity?.let {
-                                presenter.sendFile(Compressor.compress(it,qiscusPhoto.photoFile), caption, true)
+                        try {
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                activity?.let {
+                                    presenter.sendFile(
+                                        Compressor.compress(it,qiscusPhoto.photoFile),
+                                        caption
+                                    )
+                                }
                             }
+                        } catch (e: NullPointerException) {
+                            showError(QiscusTextUtil.getString(R.string.qiscus_corrupted_file_mc))
+                            return
+                        } catch (e: IOException) {
+                            showError(QiscusTextUtil.getString(R.string.qiscus_corrupted_file_mc))
+                            return
                         }
                     }
                 } else {
