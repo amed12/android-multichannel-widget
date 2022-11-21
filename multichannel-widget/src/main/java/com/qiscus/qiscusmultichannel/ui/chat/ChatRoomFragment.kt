@@ -284,6 +284,7 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
     private fun openGallery() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val intent = Intent(MediaStore.ACTION_PICK_IMAGES)
+            intent.type = "image/*"
             startActivityForResult(intent, PHOTO_PICKER_REQUEST_CODE)
         }else{
             if (QiscusPermissionsUtil.hasPermissions(ctx, FILE_PERMISSION) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
