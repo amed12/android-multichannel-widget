@@ -11,7 +11,6 @@ import com.qiscus.sdk.chat.core.presenter.QiscusChatRoomEventHandler
 import com.qiscus.sdk.chat.core.util.QiscusAndroidUtil
 import com.qiscus.sdk.chat.core.util.QiscusFileUtil
 import com.qiscus.sdk.chat.core.util.QiscusTextUtil
-import id.zelory.compressor.Compressor
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.json.JSONException
@@ -21,9 +20,6 @@ import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.io.File
-import java.io.IOException
-import java.util.*
-import kotlin.collections.ArrayList
 import androidx.core.util.Pair as APair
 
 /**
@@ -66,7 +62,7 @@ class ChatRoomPresenter(var room: QChatRoom) : QiscusChatRoomEventHandler.StateL
         message.setSender(qUser)
 
         if (message.type == QMessage.Type.TEXT && message.text.trim().isEmpty()) {
-           return
+            return
         }
 
         val subscription = Const.qiscusCore()?.api?.sendMessage(message)
@@ -237,21 +233,9 @@ class ChatRoomPresenter(var room: QChatRoom) : QiscusChatRoomEventHandler.StateL
         sendFile(file, null)
     }
 
-    fun sendFile(file: File, caption: String?) {
-        var compressedFile = file
-        if (QiscusFileUtil.isImage(file.path) && !file.name.endsWith(".gif")) {
-            try {
-                compressedFile = Compressor(Const.qiscusCore()?.getApps()).compressToFile(file)
-            } catch (e: NullPointerException) {
-                view?.showError(QiscusTextUtil.getString(R.string.qiscus_corrupted_file_mc))
-                return
-            } catch (e: IOException) {
-                view?.showError(QiscusTextUtil.getString(R.string.qiscus_corrupted_file_mc))
-                return
-            }
-
-        } else {
-            compressedFile = QiscusFileUtil.saveFile(compressedFile)
+    fun sendFile(file: File, caption: String?, isCompressed: Boolean = false) {
+        if (!isCompressed) {
+            QiscusFileUtil.saveFile(file)
         }
 
         if (!file.exists()) { //File have been removed, so we can not upload it anymore
@@ -261,7 +245,7 @@ class ChatRoomPresenter(var room: QChatRoom) : QiscusChatRoomEventHandler.StateL
 
         val json = JSONObject()
         try {
-            json.put("url", compressedFile.path)
+            json.put("url", file.path)
                 .put("caption", caption)
                 .put("file_name", file.name)
                 .put("size", file.length())
@@ -283,9 +267,9 @@ class ChatRoomPresenter(var room: QChatRoom) : QiscusChatRoomEventHandler.StateL
         qiscusComment.setSender(qUser)
 
         view?.onSendingComment(qiscusComment)
-        val finalCompressedFile = compressedFile
+        val finalCompressedFile = file
         val subscription = Const.qiscusCore()?.api
-            ?.upload(compressedFile) { percentage ->
+            ?.upload(file) { percentage ->
                 qiscusComment.progress = percentage.toInt()
             }
             ?.doOnSubscribe { Const.qiscusCore()?.getDataStore()?.addOrUpdate(qiscusComment) }
