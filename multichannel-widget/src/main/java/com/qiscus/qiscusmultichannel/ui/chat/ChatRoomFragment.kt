@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -35,8 +36,10 @@ import com.qiscus.sdk.chat.core.data.model.QChatRoom
 import com.qiscus.sdk.chat.core.data.model.QMessage
 import com.qiscus.sdk.chat.core.data.model.QiscusPhoto
 import com.qiscus.sdk.chat.core.util.QiscusFileUtil
+import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_chat_room_mc.*
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
@@ -605,7 +608,13 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
                     data.getParcelableExtra<QiscusPhoto>(SendImageConfirmationActivity.EXTRA_PHOTOS)
                 }
                 if (qiscusPhoto != null) {
-                    presenter.sendFile(qiscusPhoto.photoFile, caption)
+                    if (QiscusFileUtil.isImage(qiscusPhoto.photoFile.path) && !qiscusPhoto.photoFile.name.endsWith(".gif")) {
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            activity?.let {
+                                presenter.sendFile(Compressor.compress(it,qiscusPhoto.photoFile), caption, true)
+                            }
+                        }
+                    }
                 } else {
                     showError(getString(R.string.qiscus_chat_error_failed_read_picture_mc))
                 }
