@@ -243,7 +243,7 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
         val permission = if (Build.VERSION.SDK_INT <= 28) CAMERA_PERMISSION_28 else CAMERA_PERMISSION
         if (QiscusPermissionsUtil.hasPermissions(ctx, permission)) {
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            if (intent.resolveActivity(ctx.packageManager) == null && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
+            if (intent.resolveActivity(ctx.packageManager) == null && Build.VERSION.SDK_INT < 28){
                 return
             }
             var photoFile: File? = null
