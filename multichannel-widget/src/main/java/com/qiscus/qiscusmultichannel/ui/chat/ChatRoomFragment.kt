@@ -52,8 +52,11 @@ import java.io.IOException
  */
 class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
     ChatRoomPresenter.ChatRoomView, QiscusPermissionsUtil.PermissionCallbacks {
+    /*
+    for android 13
     private val REQUEST_PHOTO_PICKER_SINGLE_SELECT = 9496
     private val PHOTO_PICKER_REQUEST_CODE = 9496
+     */
     private val CAMERA_PERMISSION = arrayOf(
         "android.permission.CAMERA"
     )
@@ -110,11 +113,7 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
         initRecyclerMessage()
 
         arguments?.let {
-            qiscusChatRoom = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getParcelable(CHATROOM_KEY, QChatRoom::class.java)
-            } else {
-                it.getParcelable(CHATROOM_KEY)
-            }
+            qiscusChatRoom = it.getParcelable(CHATROOM_KEY)
         }
 
         if (qiscusChatRoom == null) {
@@ -286,16 +285,10 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
     }
 
     private fun openGallery() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val intent = Intent(MediaStore.ACTION_PICK_IMAGES)
-            intent.type = "image/*"
-            startActivityForResult(intent, PHOTO_PICKER_REQUEST_CODE)
-        }else{
-            if (QiscusPermissionsUtil.hasPermissions(ctx, FILE_PERMISSION) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                pickImage()
-            } else {
-                requestFilePermission()
-            }
+        if (QiscusPermissionsUtil.hasPermissions(ctx, FILE_PERMISSION) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            pickImage()
+        } else {
+            requestFilePermission()
         }
     }
 
@@ -603,11 +596,8 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
                 }
 
                 val caption = data.getStringExtra(SendImageConfirmationActivity.EXTRA_CAPTIONS)
-                val qiscusPhoto = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    data.getParcelableExtra(SendImageConfirmationActivity.EXTRA_PHOTOS, QiscusPhoto::class.java)
-                } else {
+                val qiscusPhoto =
                     data.getParcelableExtra<QiscusPhoto>(SendImageConfirmationActivity.EXTRA_PHOTOS)
-                }
                 if (qiscusPhoto != null) {
                     if (QiscusFileUtil.isImage(qiscusPhoto.photoFile.path) && !qiscusPhoto.photoFile.name.endsWith(".gif")) {
                         try {
@@ -658,6 +648,8 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
                     presenter.sendFile(File(paths[0]))
                 }
             }
+            /*
+            for android 13
             requestCode == REQUEST_PHOTO_PICKER_SINGLE_SELECT -> {
                 try {
                     val imageFile = QiscusFileUtil.from(data?.data!!)
@@ -673,6 +665,7 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
                     showError("Failed to open image file!")
                 }
             }
+             */
             else -> {
                 Log.d("requestCode",requestCode.toString())
             }
