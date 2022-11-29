@@ -2,11 +2,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 android {
-    compileSdkVersion 33
+    compileSdkVersion 32
     buildToolsVersion "30.0.3"
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 33
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -25,6 +25,11 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    lintOptions {
+        checkReleaseBuilds false
+        //If you want to continue even if errors found use following line
+        abortOnError false
+    }
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
     }
@@ -40,10 +45,11 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.core:core-ktx:1.0.2'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'id.zelory:compressor:2.1.0'
+    implementation 'id.zelory:compressor:3.0.1'
     implementation 'com.google.android.material:material:1.0.0'
-    api 'com.qiscus.sdk:chat-core:3.0.0-beta.23'
+    api 'com.qiscus.sdk:chat-core:3.0.0-beta.25'
     implementation "com.qiscus.utils:nirmana:1.3.0"
     implementation "com.qiscus.utils:jupuk:1.4.2"
     implementation 'com.mikhaellopez:circularimageview:4.1.1'

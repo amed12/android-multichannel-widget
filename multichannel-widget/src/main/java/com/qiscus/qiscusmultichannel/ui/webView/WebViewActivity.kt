@@ -3,7 +3,7 @@ package com.qiscus.qiscusmultichannel.ui.webView
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.webkit.WebSettings.LOAD_NO_CACHE
+import android.webkit.WebSettings.LOAD_DEFAULT
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
@@ -60,7 +60,7 @@ class WebViewActivity : AppCompatActivity() {
         url?.let { webview.loadUrl(it) }
 
         with(webview.settings) {
-            cacheMode = LOAD_NO_CACHE
+            cacheMode = LOAD_DEFAULT
             javaScriptEnabled = true
             domStorageEnabled = true
             allowContentAccess = true
