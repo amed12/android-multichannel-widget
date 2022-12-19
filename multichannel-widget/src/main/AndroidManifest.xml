@@ -15,28 +15,6 @@
             android:name=".ui.chat.ChatRoomActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="com.qiscus.example.mybb" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="com.qiscus.example.mybb"
-                    android:scheme="https" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="com.qiscus.example.mybb" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="link.qiscus.chat"
-                    android:scheme="http" />
-            </intent-filter>
         </activity>
         <activity android:name="com.qiscus.qiscusmultichannel.ui.webView.WebViewActivity" />
 
