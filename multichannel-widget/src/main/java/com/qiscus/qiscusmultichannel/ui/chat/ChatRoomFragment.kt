@@ -333,7 +333,9 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
 
 
     private fun bindReplyView(origin: QMessage) {
-        val obj = JSONObject(origin.payload)
+        //Handle when payload is null or empty
+        val payload = if (!origin.payload.isValidJson()) "{}" else origin.payload
+        val obj = JSONObject(payload)
         originSender.text = origin.sender.name
         when (origin.type) {
             QMessage.Type.IMAGE -> {
@@ -341,7 +343,7 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
                 Nirmana.getInstance().get()
                     .load(origin.attachmentUri)
                     .into(originImage)
-                originContent.text = obj.getString("caption")
+                originContent.text = obj.optString("caption","")
             }
             QMessage.Type.FILE -> {
                 originContent.text = origin.attachmentName
@@ -392,13 +394,15 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
     fun copyComment() {
         clearSelectedComment()
         commentsAdapter.getSelectedComment()?.let {
-            val obj = JSONObject(it.payload)
+            //Handle when payload is null or empty
+            val payload = if (!it.payload.isValidJson()) "{}" else it.payload
+            val obj = JSONObject(payload)
             val textCopied = when (it.type) {
                 QMessage.Type.FILE -> it.attachmentName
-                QMessage.Type.IMAGE -> obj.getString("caption")
+                QMessage.Type.IMAGE -> obj.optString("caption")
                 QMessage.Type.CARD -> {
-                    val title = obj.getString("title")
-                    val description = obj.getString("description")
+                    val title = obj.optString("title", "")
+                    val description = obj.optString("description", "")
                     title + "\n" + description
                 }
                 else -> it.text
