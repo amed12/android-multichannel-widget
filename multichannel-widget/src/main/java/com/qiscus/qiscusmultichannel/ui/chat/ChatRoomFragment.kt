@@ -1,12 +1,14 @@
 package com.qiscus.qiscusmultichannel.ui.chat
 
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.AlertDialog
 import android.content.*
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -153,6 +155,34 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
         if (Build.VERSION.SDK_INT <= 28) {
             requestFilePermission()
         }
+
+        //This request permission only on Android API 31+
+        requestAlarmPermission()
+    }
+
+    private fun requestAlarmPermission() {
+        val alarmMgr: AlarmManager =
+            requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!alarmMgr.canScheduleExactAlarms()) {
+                val alertBuilder: androidx.appcompat.app.AlertDialog.Builder =
+                    androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                alertBuilder.setCancelable(true)
+                alertBuilder.setTitle(resources.getString(R.string.qiscus_title_permission_alarm))
+                alertBuilder.setMessage(resources.getString(R.string.qiscus_sub_title_permission_alarm))
+                alertBuilder.setPositiveButton(android.R.string.ok) { _, _ ->
+                    val intent = Intent(
+                        Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                        Uri.parse("package:" + requireContext().packageName)
+                    )
+
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                }
+                val alert: androidx.appcompat.app.AlertDialog = alertBuilder.create()
+                alert.show()
+            }
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -240,10 +270,11 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
     }
 
     private fun openCamera() {
-        val permission = if (Build.VERSION.SDK_INT <= 28) CAMERA_PERMISSION_28 else CAMERA_PERMISSION
+        val permission =
+            if (Build.VERSION.SDK_INT <= 28) CAMERA_PERMISSION_28 else CAMERA_PERMISSION
         if (QiscusPermissionsUtil.hasPermissions(ctx, permission)) {
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            if (intent.resolveActivity(ctx.packageManager) == null && Build.VERSION.SDK_INT < 28){
+            if (intent.resolveActivity(ctx.packageManager) == null && Build.VERSION.SDK_INT < 28) {
                 return
             }
             var photoFile: File? = null
@@ -285,7 +316,11 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
     }
 
     private fun openGallery() {
-        if (QiscusPermissionsUtil.hasPermissions(ctx, FILE_PERMISSION) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (QiscusPermissionsUtil.hasPermissions(
+                ctx,
+                FILE_PERMISSION
+            ) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        ) {
             pickImage()
         } else {
             requestFilePermission()
@@ -293,7 +328,11 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
     }
 
     private fun openFile() {
-        if ((Build.VERSION.SDK_INT >= 29) || (Build.VERSION.SDK_INT <= 28 && QiscusPermissionsUtil.hasPermissions(ctx, FILE_PERMISSION))) {
+        if ((Build.VERSION.SDK_INT >= 29) || (Build.VERSION.SDK_INT <= 28 && QiscusPermissionsUtil.hasPermissions(
+                ctx,
+                FILE_PERMISSION
+            ))
+        ) {
             JupukBuilder().setMaxCount(1)
                 .setColorPrimary(ContextCompat.getColor(ctx, R.color.colorPrimary))
                 .setColorPrimaryDark(ContextCompat.getColor(ctx, R.color.colorPrimaryDark))
@@ -343,7 +382,7 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
                 Nirmana.getInstance().get()
                     .load(origin.attachmentUri)
                     .into(originImage)
-                originContent.text = obj.optString("caption","")
+                originContent.text = obj.optString("caption", "")
             }
             QMessage.Type.FILE -> {
                 originContent.text = origin.attachmentName
@@ -584,7 +623,11 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
                     val qiscusPhoto = QiscusPhoto(imageFile)
 
                     val intent =
-                        SendImageConfirmationActivity.generateIntent(ctx, qiscusChatRoom!!, qiscusPhoto)
+                        SendImageConfirmationActivity.generateIntent(
+                            ctx,
+                            qiscusChatRoom!!,
+                            qiscusPhoto
+                        )
                     startActivityForResult(intent, SEND_PICTURE_CONFIRMATION_REQUEST)
 
                 } catch (e: Exception) {
@@ -603,12 +646,15 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
                 val qiscusPhoto =
                     data.getParcelableExtra<QiscusPhoto>(SendImageConfirmationActivity.EXTRA_PHOTOS)
                 if (qiscusPhoto != null) {
-                    if (QiscusFileUtil.isImage(qiscusPhoto.photoFile.path) && !qiscusPhoto.photoFile.name.endsWith(".gif")) {
+                    if (QiscusFileUtil.isImage(qiscusPhoto.photoFile.path) && !qiscusPhoto.photoFile.name.endsWith(
+                            ".gif"
+                        )
+                    ) {
                         try {
                             viewLifecycleOwner.lifecycleScope.launch {
                                 activity?.let {
                                     presenter.sendFile(
-                                        Compressor.compress(it,qiscusPhoto.photoFile),
+                                        Compressor.compress(it, qiscusPhoto.photoFile),
                                         caption
                                     )
                                 }
@@ -671,7 +717,7 @@ class ChatRoomFragment : Fragment(), QiscusChatScrollListener.Listener,
             }
              */
             else -> {
-                Log.d("requestCode",requestCode.toString())
+                Log.d("requestCode", requestCode.toString())
             }
         }
 
