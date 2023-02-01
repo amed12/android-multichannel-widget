@@ -21,7 +21,6 @@ import com.qiscus.sdk.chat.core.util.QiscusNumberUtil
 import org.json.JSONObject
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import java.util.*
 
 /**
  * Created on : 2019-11-08
@@ -98,7 +97,7 @@ class PNUtil {
                 .setContentText(getContent(context, qiscusComment))
                 .setTicker(getContent(context, qiscusComment))
                 //@TODO Change background image
-                .setSmallIcon(R.drawable.ic_qiscus_notification_icon)
+                .setSmallIcon(R.drawable.ic_mybb_notif)
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setGroup("CHAT_NOTIF_" + qiscusComment.chatRoomId)
                 .setAutoCancel(true)
