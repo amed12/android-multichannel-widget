@@ -30,6 +30,4 @@
     <string name="qiscus_delete_message_title">Delete Message</string>
     <string name="qiscus_delete">Delete</string>
     <string name="qiscus_cancel">Cancel</string>
-    <string name="qiscus_title_permission_alarm">Permission necessary</string>
-    <string name="qiscus_sub_title_permission_alarm">Schedule Exact Alarm permission is necessary for realtime</string>
 </resources>
