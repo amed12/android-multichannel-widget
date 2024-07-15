@@ -1,16 +1,13 @@
 package com.qiscus.qiscusmultichannel.data.repository.impl
 
-import com.qiscus.qiscusmultichannel.MultichannelWidget
-import com.qiscus.qiscusmultichannel.MultichannelWidgetConfig
-import com.qiscus.qiscusmultichannel.data.model.DataInitialChat
-import com.qiscus.qiscusmultichannel.data.model.UserProperties
+import com.qiscus.qiscusmultichannel.data.model.user.UserProperties
 import com.qiscus.qiscusmultichannel.data.repository.ChatroomRepository
-import com.qiscus.qiscusmultichannel.data.repository.response.ResponseInitiateChat
 import com.qiscus.qiscusmultichannel.util.Const
 import com.qiscus.qiscusmultichannel.util.QiscusChatLocal
 import com.qiscus.sdk.chat.core.data.model.QAccount
 import com.qiscus.sdk.chat.core.data.model.QMessage
 import com.qiscus.sdk.chat.core.data.model.QUser
+import com.qiscus.sdk.chat.core.data.model.QiscusNonce
 import org.json.JSONObject
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -41,7 +38,7 @@ class ChatroomRepositoryImpl : ChatroomRepository {
         }
 
         Const.qiscusCore()?.api?.sendMessage(message)
-            ?.doOnSubscribe { Const.qiscusCore()?.getDataStore()?.addOrUpdate(message) }
+            ?.doOnSubscribe { Const.qiscusCore()?.dataStore?.addOrUpdate(message) }
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
@@ -69,13 +66,12 @@ class ChatroomRepositoryImpl : ChatroomRepository {
         Const.qiscusCore()?.pusherApi?.subsribeCustomEvent(roomId)
     }
 
-    fun initiateChat(
-        name: String,
-        userId: String,
+    fun loginMultichannel(
+        userId: String?,
         avatar: String?,
-        extras: String,
-        userProp: List<UserProperties>,
-        responseInitiateChat: (ResponseInitiateChat) -> Unit,
+        extras: String?,
+        userProp: List<UserProperties>?,
+        onSuccess: (QiscusNonce) -> Unit,
         onError: (Throwable) -> Unit
     ) {
 
@@ -89,24 +85,7 @@ class ChatroomRepositoryImpl : ChatroomRepository {
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
-                MultichannelWidget.instance.component.qiscusChatRepository.initiateChat(
-                    DataInitialChat(
-                        Const.qiscusCore()?.getAppId()!!,
-                        userId,
-                        name,
-                        avatar,
-                        it.nonce,
-                        null,
-                        extras,
-                        userProp
-                    ), {
-                        it.data.isSessional?.let {
-                            MultichannelWidgetConfig.setSessional(true)
-                        }
-                        responseInitiateChat(it)
-                    }, {
-                        onError(it)
-                    })
+                onSuccess(it)
             }, {
                 onError(it)
             })

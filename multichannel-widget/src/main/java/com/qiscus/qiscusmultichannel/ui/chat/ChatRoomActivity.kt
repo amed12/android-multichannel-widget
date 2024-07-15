@@ -1,10 +1,16 @@
 package com.qiscus.qiscusmultichannel.ui.chat
 
+import android.app.AlarmManager
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.qiscus.nirmana.Nirmana
@@ -15,6 +21,7 @@ import com.qiscus.qiscusmultichannel.util.Const
 import com.qiscus.sdk.chat.core.data.model.QChatRoom
 import com.qiscus.sdk.chat.core.data.model.QMessage
 import com.qiscus.sdk.chat.core.event.QMessageReceivedEvent
+import com.qiscus.sdk.chat.core.event.QiscusMqttStatusEvent
 import com.qiscus.sdk.chat.core.event.QiscusUserStatusEvent
 import com.qiscus.sdk.chat.core.util.QiscusDateUtil
 import kotlinx.android.synthetic.*
@@ -37,17 +44,17 @@ class ChatRoomActivity : AppCompatActivity(), ChatRoomFragment.CommentSelectedLi
     }
     private var handler = Handler(Looper.getMainLooper())
     companion object {
-        val CHATROOM_KEY = "chatroom_key"
+        const val CHATROOM_KEY = "chatroom_key"
 
         fun generateIntent(
             context: Context,
-            qiscusChatRoom: QChatRoom
-        ): Intent {
-
+            qiscusChatRoom: QChatRoom,
+            clearTaskActivity: Boolean
+        ) {
             val intent = Intent(context, ChatRoomActivity::class.java)
-            //intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            if (clearTaskActivity) intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             intent.putExtra(CHATROOM_KEY, qiscusChatRoom)
-            return intent
+            context.startActivity(intent)
         }
     }
 
@@ -73,6 +80,8 @@ class ChatRoomActivity : AppCompatActivity(), ChatRoomFragment.CommentSelectedLi
                 ChatRoomFragment::class.java.name
             )
             .commit()
+
+        setAlarmManager()
 
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
@@ -187,4 +196,42 @@ class ChatRoomActivity : AppCompatActivity(), ChatRoomFragment.CommentSelectedLi
         EventBus.getDefault().unregister(this)
         clearFindViewByIdCache()
     }
+
+    @Subscribe
+    fun onConnection(mqttStatusEvent: QiscusMqttStatusEvent) {
+        when (mqttStatusEvent) {
+            QiscusMqttStatusEvent.CONNECTED -> {
+                Log.i("test_mqtt:", "connected")
+            }
+            QiscusMqttStatusEvent.DISCONNECTED -> {
+                Log.i("test_mqtt:", "disconnected")
+            }
+        }
+    }
+
+    private fun setAlarmManager() {
+        val alarmMgr = this.getSystemService(ALARM_SERVICE) as AlarmManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+
+            if (!alarmMgr.canScheduleExactAlarms()) {
+                val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+                    .setCancelable(true)
+                    .setTitle("Permission necessary")
+                    .setMessage("Schedule Exact Alarm permission is necessary for realtime")
+                    .setPositiveButton(android.R.string.yes) { dialog, which ->
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            val intent = Intent(
+                                Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                                Uri.parse("package:" + this.packageName)
+                            )
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            this.applicationContext.startActivity(intent)
+                        }
+                    }
+                val alert: AlertDialog = alertBuilder.create()
+                alert.show()
+            }
+        }
+    }
+
 }

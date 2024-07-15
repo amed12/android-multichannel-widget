@@ -51,20 +51,19 @@ class ChatRoomPresenter(var room: QChatRoom) : QiscusChatRoomEventHandler.StateL
     }
 
     private fun sendComment(message: QMessage) {
-//        view.onSendingComment(qiscusComment)
-
-        val qAccount: QAccount = Const.qiscusCore()?.getQiscusAccount()!!
-        val qUser = QUser()
-        qUser.avatarUrl = qAccount.avatarUrl
-        qUser.id = qAccount.id
-        qUser.extras = qAccount.extras
-        qUser.name = qAccount.name
-        message.setSender(qUser)
-
         if (message.type == QMessage.Type.TEXT && message.text.trim().isEmpty()) {
             return
         }
 
+        val qAccount: QAccount = Const.qiscusCore()?.getQiscusAccount()!!
+        message.sender = QUser().apply {
+            avatarUrl = qAccount.avatarUrl
+            id = qAccount.id
+            extras = qAccount.extras
+            name = qAccount.name
+        }
+
+        view?.onSendingComment(message)
         val subscription = Const.qiscusCore()?.api?.sendMessage(message)
             ?.doOnSubscribe { Const.qiscusCore()?.getDataStore()?.addOrUpdate(message) }
             ?.doOnNext { this.commentSuccess(it) }
@@ -490,7 +489,7 @@ class ChatRoomPresenter(var room: QChatRoom) : QiscusChatRoomEventHandler.StateL
 
 
     }
-
+    //todo check diproduct
     private fun handleIsResolvedMsg(qiscusComment: QMessage) {
         if (qiscusComment.type == QMessage.Type.LINK) {
             val url = qiscusComment.extras.getString("survey_link")

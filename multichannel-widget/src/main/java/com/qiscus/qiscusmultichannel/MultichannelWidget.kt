@@ -2,11 +2,11 @@ package com.qiscus.qiscusmultichannel
 
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import com.google.firebase.messaging.RemoteMessage
 import com.qiscus.jupuk.Jupuk
 import com.qiscus.nirmana.Nirmana
-import com.qiscus.qiscusmultichannel.data.model.UserProperties
+import com.qiscus.qiscusmultichannel.data.model.DataInitialChat
+import com.qiscus.qiscusmultichannel.data.model.user.UserProperties
 import com.qiscus.qiscusmultichannel.ui.chat.ChatRoomActivity
 import com.qiscus.qiscusmultichannel.ui.loading.LoadingActivity
 import com.qiscus.qiscusmultichannel.util.Const
@@ -16,7 +16,6 @@ import com.qiscus.sdk.chat.core.QiscusCore
 import com.qiscus.sdk.chat.core.data.model.QAccount
 import com.qiscus.sdk.chat.core.data.model.QChatRoom
 import com.qiscus.sdk.chat.core.data.model.QiscusNonce
-import com.qiscus.sdk.chat.core.util.QiscusFirebaseMessagingUtil
 import org.json.JSONObject
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -37,6 +36,7 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
 
         lateinit var application: Application
         private var appId: String = ""
+        private var localPrefKey: String = ""
 
         @JvmStatic
         val instance: MultichannelWidget
@@ -53,7 +53,12 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
             }
 
         @JvmStatic
-        fun setup(application: Application, qiscusCore: QiscusCore, applicationId: String, localPrefKey: String) {
+        fun setup(
+            application: Application,
+            qiscusCore: QiscusCore,
+            applicationId: String,
+            localPrefKey: String
+        ) {
             setup(application, qiscusCore, applicationId, MultichannelWidgetConfig, localPrefKey)
         }
 
@@ -101,32 +106,57 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
     }
 
     fun loginMultiChannel(
-        name: String,
-        userId: String,
+        name: String?,
+        userId: String?,
         avatar: String?,
-        extras: String,
-        userProperties: List<UserProperties>,
+        extras: String?,
+        userProperties: List<UserProperties>?,
         onSuccess: (QAccount) -> Unit,
         onError: (Throwable) -> Unit
     ) {
 
-        instance.component.chatroomRepository.initiateChat(name, userId, avatar, extras, userProperties, {
-            it.data.roomId?.toLong()?.let { id ->
-                QiscusChatLocal.setRoomId(id)
-            }
-            it.data.identityToken?.let {
-                Const.qiscusCore()?.setUserWithIdentityToken(it,
-                    object : QiscusCore.SetUserListener {
-                        override fun onSuccess(qiscusAccount: QAccount) {
-                            onSuccess(qiscusAccount)
+        component.chatroomRepository.loginMultichannel(
+            userId,
+            avatar,
+            extras,
+            userProperties,
+            {
+                component.qiscusChatRepository.initiateChat(
+                    DataInitialChat(
+                        Const.qiscusCore()?.appId!!,
+                        userId,
+                        name,
+                        avatar,
+                        it.nonce,
+                        null,
+                        extras,
+                        userProperties,
+                        config.getChannelId()
+                    ), { response ->
+                        response.data.isSessional?.let { sessional ->
+                            config.setSessional(sessional)
                         }
 
-                        override fun onError(throwable: Throwable) {
-                            onError(throwable)
+                        response.data.customerRoom?.roomId?.toLong()?.let { id ->
+                            QiscusChatLocal.setRoomId(id)
                         }
+
+                        response.data.identityToken?.let { token ->
+                            Const.qiscusCore()?.setUserWithIdentityToken(token,
+                                object : QiscusCore.SetUserListener {
+                                    override fun onSuccess(qiscusAccount: QAccount) {
+                                        onSuccess(qiscusAccount)
+                                    }
+
+                                    override fun onError(throwable: Throwable) {
+                                        onError(throwable)
+                                    }
+                                })
+                        }
+                    }, { throwable ->
+                        onError(throwable)
                     })
-            }
-        }) {
+            }) {
             onError(it)
         }
     }
@@ -197,6 +227,16 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
 
     fun hasSetupUser(): Boolean =  Const.qiscusCore()?.hasSetupUser()!!
 
+    fun isLoggedIn(): Boolean {
+        try {
+            Const.qiscusCore()?.qiscusAccount?.let {
+                return true
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return false
+    }
 
     fun openChatRoomById(
         context: Context,
@@ -209,11 +249,7 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
         }
 
         openChatRoomById(roomId, {
-            val intent = ChatRoomActivity.generateIntent(context, it)
-            if (clearTaskActivity) {
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            context.startActivity(intent)
+            ChatRoomActivity.generateIntent(context, it, clearTaskActivity)
         }, {
             onError(it)
         })
@@ -249,13 +285,13 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
             application.applicationContext,
             QiscusChatLocal.getRoomId(),
             clearTaskActivity
-        ) {
-            it
+        ) { throwable ->
+            throwable.printStackTrace()
         }
     }
 
     fun initiateChat(context: Context, name: String, userId: String, avatar: String, extras: JSONObject?, userProperties: Map<String, String>?) {
-        var userProp: MutableList<UserProperties> = ArrayList()
+        val userProp: MutableList<UserProperties> = ArrayList()
         userProperties?.let {
              for ((k,v) in it) {
                  val obj = UserProperties(k, v)
@@ -274,11 +310,15 @@ class MultichannelWidget constructor(val component: MultichannelWidgetComponent)
         return Const.qiscusCore()?.getAppId()!!
     }
 
-    fun isMultichannelMessage(remoteMessage: RemoteMessage, qiscusCores: MutableList<QiscusCore>): Boolean {
+    fun isMultichannelMessage(
+        remoteMessage: RemoteMessage,
+        qiscusCores: MutableList<QiscusCore>
+    ): Boolean {
         Const.setAllQiscusCore(qiscusCores)
         try {
-            val msg = JSONObject(remoteMessage.data.get("payload")).get("room_options").toString()
-            if (JSONObject(msg).get("app_code") == appId) {
+            val msg = remoteMessage.data["payload"]
+                ?.let { JSONObject(it).get("room_options").toString() }
+            if (msg?.let { JSONObject(it).get("app_code") } == appId) {
                 Const.qiscusCore()?.firebaseMessagingUtil?.handleMessageReceived(remoteMessage)
                 return true
             }

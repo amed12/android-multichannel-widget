@@ -13,7 +13,7 @@ class QiscusChatRepository(val api: QiscusChatApi.Api) {
         onSuccess: (ResponseInitiateChat) -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        api.getNonce(dataInitialChat).enqueue(object : Callback<ResponseInitiateChat?> {
+        api.initiateChat(dataInitialChat).enqueue(object : Callback<ResponseInitiateChat?> {
             override fun onFailure(call: Call<ResponseInitiateChat?>, t: Throwable) {
                 onError(t)
             }
@@ -23,10 +23,7 @@ class QiscusChatRepository(val api: QiscusChatApi.Api) {
                 response: Response<ResponseInitiateChat?>
             ) {
                 if (response.isSuccessful) {
-                    val result = response.body()?.data?.let {
-                        ResponseInitiateChat(it)
-                    }
-                    result?.let {
+                    response.body()?.let {
                         onSuccess(it)
                     }
 
@@ -34,6 +31,32 @@ class QiscusChatRepository(val api: QiscusChatApi.Api) {
                     onError(Throwable("Error get data from api"))
                 }
             }
+        })
+    }
+
+    fun checkSessional(
+        appCode: String,
+        onSuccess: (ResponseInitiateChat) -> Unit,
+        onError: (Throwable) -> Unit
+    ) {
+        api.sessionalCheck(appCode).enqueue(object : Callback<ResponseInitiateChat> {
+            override fun onFailure(call: Call<ResponseInitiateChat>, t: Throwable) {
+                onError(t)
+            }
+
+            override fun onResponse(
+                call: Call<ResponseInitiateChat>,
+                response: Response<ResponseInitiateChat>
+            ) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        onSuccess(it)
+                    }
+                } else {
+                    onError(Throwable("Error get data from api"))
+                }
+            }
+
         })
     }
 }

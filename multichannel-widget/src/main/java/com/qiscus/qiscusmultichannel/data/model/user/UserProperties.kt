@@ -1,4 +1,4 @@
-package com.qiscus.qiscusmultichannel.data.model
+package com.qiscus.qiscusmultichannel.data.model.user
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable

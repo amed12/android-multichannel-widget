@@ -1,7 +1,7 @@
 package com.qiscus.qiscusmultichannel.ui.loading
 
 import com.qiscus.qiscusmultichannel.MultichannelWidget
-import com.qiscus.qiscusmultichannel.data.model.UserProperties
+import com.qiscus.qiscusmultichannel.data.model.user.UserProperties
 import com.qiscus.qiscusmultichannel.util.QiscusChatLocal
 import com.qiscus.sdk.chat.core.data.model.QChatRoom
 
@@ -23,20 +23,23 @@ class LoadingPresenter {
     }
 
     fun initiateChat(username: String, userId: String, avatar: String?, extras: String, userProp: List<UserProperties>) {
-        if (QiscusChatLocal.getHasMigration() == false) {
+        if (!QiscusChatLocal.getHasMigration()) {
             QiscusChatLocal.setHasMigration(true)
             QiscusChatLocal.setRoomId(0)
         }
 
-        if (QiscusChatLocal.getRoomId() == 0L) {
-            MultichannelWidget.instance.loginMultiChannel(username, userId, avatar, extras, userProp, {
+        MultichannelWidget.instance.loginMultiChannel(
+            username,
+            userId,
+            avatar,
+            extras,
+            userProp,
+            {
                 openRoomById()
-            }, {
-               view?.onError(it.localizedMessage)
+            },
+            {
+                view?.onError(it.localizedMessage)
             })
-        } else {
-            openRoomById()
-        }
     }
 
     fun openRoomById() {
