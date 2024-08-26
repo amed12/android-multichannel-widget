@@ -75,7 +75,7 @@
                 app:layout_constraintStart_toEndOf="@+id/ivAvatar"
                 app:layout_constraintTop_toTopOf="@+id/ivAvatar" />
 
-            <com.mikhaellopez.circularimageview.CircularImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ivAvatar"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
