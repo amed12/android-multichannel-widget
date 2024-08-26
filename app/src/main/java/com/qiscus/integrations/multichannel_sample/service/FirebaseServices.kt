@@ -2,11 +2,14 @@ package com.qiscus.integrations.multichannel_sample.service
 
 import android.util.Log
 import com.google.android.gms.tasks.Task
+import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.qiscus.integrations.multichannel_sample.ConstCore
 import com.qiscus.qiscusmultichannel.MultichannelWidget
+import com.qiscus.sdk.chat.core.data.model.QiscusAppConfig
+import com.qiscus.sdk.chat.core.util.QiscusAndroidUtil
 
 /**
  * Created on : 26/03/20

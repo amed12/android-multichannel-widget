@@ -24,9 +24,12 @@ class QiscusChatRepository(val api: QiscusChatApi.Api) {
             ) {
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        onSuccess(it)
+                        if (it.data.customerRoom == null) {
+                            onError(Throwable("Customer room is empty"))
+                        } else {
+                            onSuccess(it)
+                        }
                     }
-
                 } else {
                     onError(Throwable("Error get data from api"))
                 }

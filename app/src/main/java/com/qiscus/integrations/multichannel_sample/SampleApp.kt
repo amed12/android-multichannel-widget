@@ -2,6 +2,7 @@ package com.qiscus.integrations.multichannel_sample
 
 import android.content.Context
 import androidx.multidex.MultiDexApplication
+import com.google.firebase.FirebaseApp
 import com.qiscus.qiscusmultichannel.MultichannelWidget
 import com.qiscus.qiscusmultichannel.MultichannelWidgetConfig
 import com.qiscus.qiscusmultichannel.util.MultichannelNotificationListener

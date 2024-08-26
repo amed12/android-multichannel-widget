@@ -7,8 +7,6 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 32
-        versionCode 1
-        versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -33,6 +31,7 @@ android {
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
     }
+    namespace 'com.qiscus.qiscusmultichannel'
 
 }
 

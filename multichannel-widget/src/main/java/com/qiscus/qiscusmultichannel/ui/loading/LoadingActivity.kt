@@ -76,6 +76,9 @@ class LoadingActivity : AppCompatActivity(), LoadingPresenter.LoadingView {
     }
 
     override fun onSuccess(room: QChatRoom) {
+        if (room.id <= 0){
+            onBackPressed()
+        }
         ChatRoomActivity.generateIntent(
             this, room, false
         )

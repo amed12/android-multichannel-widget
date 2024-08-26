@@ -4,13 +4,14 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'com.google.gms.google-services'
+
 android {
-    compileSdkVersion 32
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 33
     defaultConfig {
         applicationId "com.qiscus.integrations.multichannel_sample"
         minSdkVersion 16
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -18,7 +19,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -29,9 +30,10 @@ android {
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
     }
+    namespace 'com.qiscus.integrations.multichannel_sample'
 }
 
-dependencies {
+dependencies { 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -47,4 +49,3 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
 
 }
-apply plugin: 'com.google.gms.google-services'
