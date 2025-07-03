@@ -158,8 +158,8 @@ class ChatRoomActivity : AppCompatActivity(), ChatRoomFragment.CommentSelectedLi
 
     @Subscribe
     fun onMessageReceived(event: QMessageReceivedEvent) {
-        when (event.qiscusComment.type) {
-            QMessage.Type.SYSTEM_EVENT -> setBarInfo()
+        if (event.qiscusComment.type == QMessage.Type.SYSTEM_EVENT) {
+            setBarInfo()
         }
 
     }

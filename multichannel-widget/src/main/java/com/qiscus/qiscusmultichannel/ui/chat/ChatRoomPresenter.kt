@@ -432,15 +432,13 @@ class ChatRoomPresenter(var room: QChatRoom) : QiscusChatRoomEventHandler.StateL
 
     @Subscribe
     fun onRoomReceivedEvent(event: QiscusChatRoomEvent) {
-        when (event.event) {
-            QiscusChatRoomEvent.Event.READ -> {
-                val qiscusComment = Const.qiscusCore()?.getDataStore()?.getComment(event.commentUniqueId)
-                if (qiscusComment != null) {
-                    qiscusComment.status = QMessage.STATE_READ
-                    Const.qiscusCore()?.getDataStore()?.addOrUpdate(qiscusComment)
-                    QiscusAndroidUtil.runOnUIThread {
-                        view?.updateComment(qiscusComment)
-                    }
+        if (event.event == QiscusChatRoomEvent.Event.READ ) {
+            val qiscusComment = Const.qiscusCore()?.getDataStore()?.getComment(event.commentUniqueId)
+            if (qiscusComment != null) {
+                qiscusComment.status = QMessage.STATE_READ
+                Const.qiscusCore()?.getDataStore()?.addOrUpdate(qiscusComment)
+                QiscusAndroidUtil.runOnUIThread {
+                    view?.updateComment(qiscusComment)
                 }
             }
         }
