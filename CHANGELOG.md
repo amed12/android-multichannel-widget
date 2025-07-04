@@ -13,7 +13,8 @@ This release includes major upgrades to the build system, dependencies, and seve
   - Added new Gradle properties: `android.defaults.buildfeatures.buildconfig`, `android.nonTransitiveRClass`, and `android.nonFinalResIds`.
 - **Library dependencies:**
   - Updated `chat-core` from `3.0.0-beta.28` to `3.0.0-beta.31`.
-  - Updated `jupuk` to `1.4.2` and added `de.hdodenhof:circleimageview:3.1.0`.
+  - Updated `jupuk` from `1.4.2` (previously `1.5.2`) to `1.5.9`.
+  - Added `de.hdodenhof:circleimageview:3.1.0`.
   - Updated test dependencies and removed `com.mikhaellopez:circularimageview`.
 - **Android SDK:**
   - Increased `compileSdkVersion` and `targetSdkVersion` from `32` to `34`.
