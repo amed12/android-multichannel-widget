@@ -11,7 +11,9 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    sourceSets.forEach {
+        it.java.srcDir("src/${it.name}/java")
+    }
     buildTypes {
         release {
             minifyEnabled false
