@@ -5,12 +5,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 34
+    compileSdk 35
 //    buildToolsVersion "30.0.3"
     defaultConfig {
         applicationId "com.qiscus.integrations.multichannel_sample"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
