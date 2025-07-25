@@ -8,17 +8,22 @@
         android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <application android:theme="@style/AppTheme">
+    <application>
         <meta-data android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_mybb_notif" />
-        <activity android:name=".ui.loading.LoadingActivity" />
-        <activity android:name=".ui.chat.image.SendImageConfirmationActivity" />
+        <activity android:name=".ui.loading.LoadingActivity"
+            android:theme="@style/QiscusWidgetTheme" 
+            exported="false" />
+        <activity android:name=".ui.chat.image.SendImageConfirmationActivity"
+            android:theme="@style/QiscusWidgetTheme"
+            android:exported="false" />
         <activity
             android:name=".ui.chat.ChatRoomActivity"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
-        </activity>
-        <activity android:name="com.qiscus.qiscusmultichannel.ui.webView.WebViewActivity" />
+            android:theme="@style/QiscusWidgetTheme"
+            android:exported="false" />
+        <activity
+            android:name="com.qiscus.qiscusmultichannel.ui.webView.WebViewActivity"
+            android:theme="@style/QiscusWidgetTheme" />
 
         <receiver
             android:name=".util.NotificationClickReceiver"
